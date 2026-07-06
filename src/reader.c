@@ -5,46 +5,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-struct each_file {
-    char* name;
-    char** lines;
-    int line_count;
-};
-typedef struct each_file f;
-
-int get_markdown_names(char list_of_markdown_names[][128], int* markdown_names_index) {
-
-    struct dirent *de; //dirent entry
-    DIR *dir_stream = opendir("../markdowns");
-    if (dir_stream == NULL) {
-        perror("Error while opening the markdown directory");
-        exit(1);
-    }
-
-    while(((de = readdir(dir_stream)) != NULL)) {
-
-        if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
-            continue;
-        }
-
-        size_t len = strlen(de->d_name);
-
-        if (len < 3 || (strcmp(de->d_name + len - 2, "md") != 0)) {
-            continue;
-        }
-
-        strncpy(list_of_markdown_names[*markdown_names_index], de->d_name, 128-1);
-        list_of_markdown_names[*markdown_names_index][128-1] = '\0';
-
-        (*markdown_names_index)++;
-
-    }
-
-    closedir(dir_stream);
-
-    return 0;
-
-}
+#include "common.h"
 
 char** file_reader(char* name, int* out_line_count) {
 
@@ -99,29 +60,25 @@ char** file_reader(char* name, int* out_line_count) {
 
 }
 
-int main() {
+struct each_file get_struct(char* markdown_file_name) {
 
-    char list_of_markdown_names[127][128];
-    int markdown_names_index = 0;
-
-    int x = get_markdown_names(list_of_markdown_names, &markdown_names_index);
-
-    char* file_1 = list_of_markdown_names[0];
-    f file1;
-
-    int line_count = 0; //temp
+    struct each_file markdown_file;
+    int line_count = 0;
 
     char path_buffer[128];
-    snprintf(path_buffer, sizeof(path_buffer), "../markdowns/%s", list_of_markdown_names[0]);
+    snprintf(path_buffer, sizeof(path_buffer), "../markdowns/%s", markdown_file_name);
 
     char **lines = file_reader(path_buffer, &line_count);
 
-    file1.lines = lines;
-    file1.name = file_1;
-    file1.line_count = line_count;
+    markdown_file.lines = lines;
+    markdown_file.name = markdown_file_name;
+    markdown_file.line_count = line_count;
+
+    return markdown_file;
 
     //error handling add later
 
+    /*
     for (int i = 0; i < line_count; i++) {
         printf("%s\n", lines[i]);
     }
@@ -131,6 +88,7 @@ int main() {
     }
 
     free(lines);
+    */
 
-    return 0;
+    //return 0;
 }
