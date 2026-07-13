@@ -48,7 +48,7 @@ int main() {
 
         if (file_data.lines == NULL) {
             printf("Skipping %s : read error.\n", file_data.name);
-            continue;;
+            continue;
         }
 
         printf("Contents of %s (%d lines) : \n", file_data.name, file_data.line_count);
@@ -57,7 +57,18 @@ int main() {
             printf("%s\n", file_data.lines[j]);
         }
 
+        char *parsed_line = parse_line(file_data.lines, file_data.line_count);
+
+        printf("Parsed line of %s : \n", file_data.name);
+
+       printf("%s\n", parsed_line);
+
         //cleanup
+
+        if (parsed_line != NULL) {
+            free(parsed_line);
+        }
+
         if (file_data.lines != NULL) {
             for (int j = 0; j < file_data.line_count; j++) {
                 free(file_data.lines[j]);
@@ -66,6 +77,7 @@ int main() {
         }
 
     }
+
 
 
     return 0;

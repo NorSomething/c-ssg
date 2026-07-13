@@ -9,4 +9,6 @@ struct each_file {
 
 struct each_file get_struct(char* list_of_markdown_names);
 
+char* parse_line(char** line, int n);
+
 #endif
