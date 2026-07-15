@@ -1,0 +1,50 @@
+/*
+    this entire file is vibe coded cuz i cannot be bothered to write css lol
+*/
+
+/* Reset and global styles */
+body {
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Minimal Top Bar Navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    background-color: #fafafa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+    color: #000;
+}
+
+/* Container to keep parsed markdown looking neat */
+.content-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.navbar a.active {
+    color: #000;
+    font-weight: 700;
+    border-bottom: 2px solid #333;
+}

@@ -26,6 +26,24 @@ int heading_counter(char* line, int* amount_to_skip) {
     return count;
 }
 
+int list_item_checker(char* line, int* amount_to_skip) {
+
+    if (line == NULL)
+        return 0;
+
+    int i = 0;
+    while(line[i] == ' ')
+        i++;
+
+    if ((line[i] == '-' || line[i] == '*' || line[i] == '+') && line[i+1] == ' ') {
+        *(amount_to_skip) = i+2;
+        return 1;
+    }
+
+    return 0;
+
+}
+
 char* bold_italics_line_giver(char *line) {
 
     if (line == NULL)
@@ -122,7 +140,8 @@ char* parse_line(char** line, int n) {
     size_t buffer_size = 0;
 
     for (int i = 0; i < n; i++) {
-        buffer_size += (strlen(line[i])*3+16); //x3 for worst case html tag expansion, 16 for closing
+        buffer_size += (strlen(line[i])*3+16); //ix3 for worst case html tag expansion, 16 for closing
+        buffer_size += 16; //for list tags
     }
 
     // output string in heap so that it survies in main.c
@@ -133,12 +152,33 @@ char* parse_line(char** line, int n) {
     }
 
     output[0] = '\0';
+    int in_list = 0;
 
     for (int i = 0; i < n; i++) {
 
         char temp[1024];
         int amount_to_skip_heading = 0;
+        int amount_to_skip_list = 0;
+
         int hash_count = heading_counter(line[i], &amount_to_skip_heading);
+        int is_list = list_item_checker(line[i], &amount_to_skip_list);
+
+        if (is_list && !in_list) {
+            strcat(output, "<ul>\n");
+            in_list = 1;
+        }
+        else if (!is_list && in_list) {
+            strcat(output, "</ul>\n");
+            in_list = 0;
+        }
+
+        if (is_list) {
+            char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_list);
+            snprintf(temp, sizeof(temp), "<li>%s</li>\n", bolded_italics_text);
+            strcat(output, temp);
+            free(bolded_italics_text);
+            continue;
+        }
 
         char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_heading);
 

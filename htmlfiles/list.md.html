@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="test1.md.html">test1</a>
+    <a href="this.md.html">this</a>
+    <a href="test2.md.html">test2</a>
+    <a href="test3.md.html">test3</a>
+    <a href="list.md.html">list</a>
+</nav>
+<div class="content-container">
+<h2>Hi   </h2>
+<p></p>
+<ul>
+<li>my name is </li>
+<li>nirmal </li>
+</ul>
+<p></p>
+<p>this is a <i>test</i></p>
+</div>
+<script>
+  const currentPath = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.navbar a').forEach(link => {
+    const linkPath = link.getAttribute('href');
+    if (linkPath === currentPath || link.href === window.location.href) {
+      link.classList.add('active');
+    }
+  });
+</script>
+</body>
+</html>
