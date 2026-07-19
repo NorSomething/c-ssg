@@ -26,6 +26,14 @@
 
 #define HTML_BOILERPLATE_ENDING \
 "</div>\n" \
+"<footer class=\"site-footer\">\n" \
+"    <span class=\"footer-credit\">made with love using <a href=\"https://github.com/NorSomething/c-ssg\" target=\"_blank\">c-ssg</a></span>\n" \
+"    <span class=\"footer-links\">\n" \
+"        <a href=\"https://github.com/NorSomething\" target=\"_blank\">GitHub</a>\n" \
+"        <a href=\"#\">discord: nitmal.</a>\n" \
+"        <a href=\"resume.pdf\" target=\"_blank\">Resume</a>\n" \
+"    </span>\n" \
+"</footer>\n" \
 "<script>\n" \
 "  const currentPath = window.location.pathname.split('/').pop();\n" \
 "  document.querySelectorAll('.navbar a').forEach(link => {\n" \

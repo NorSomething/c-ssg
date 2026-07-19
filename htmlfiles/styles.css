@@ -3,12 +3,19 @@
 */
 
 /* Reset and global styles */
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
     line-height: 1.6;
     color: #333;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Minimal Top Bar Navbar */
@@ -41,6 +48,9 @@ body {
     max-width: 700px;
     margin: 2rem auto;
     padding: 0 1.5rem;
+    flex: 1 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .navbar a.active {
@@ -102,4 +112,40 @@ body {
 
 .file-list li a:hover::before {
     color: #333;
+}
+
+/* Bottom bar */
+.site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 3rem 0 0;
+    padding: 1rem 2rem;
+    border-top: 1px solid #eaeaea;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.site-footer a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.site-footer a:hover {
+    color: #000;
+}
+
+.footer-credit a {
+    font-style: italic;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.25rem;
 }
