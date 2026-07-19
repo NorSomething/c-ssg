@@ -185,7 +185,7 @@ int main() {
             continue;
         }
 
-        char file_list_html[4096] = "<ol>\n";
+        char file_list_html[4096] = "<ol class=\"file-list\">\n";
         struct dirent *fde; //file directory entry
 
         while((fde = readdir(folder_stream)) != NULL) {

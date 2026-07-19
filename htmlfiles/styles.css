@@ -48,3 +48,58 @@ body {
     font-weight: 700;
     border-bottom: 2px solid #333;
 }
+
+/* Folder file-listing (auto-generated <ol class="file-list">) */
+.file-list {
+    list-style: none;
+    counter-reset: file-counter;
+    margin: 1.5rem 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.file-list li {
+    counter-increment: file-counter;
+    position: relative;
+}
+
+.file-list li a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 0.85rem 1.1rem;
+    background-color: #fafafa;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.file-list li a::before {
+    content: counter(file-counter) ".";
+    flex: 0 0 auto;
+    min-width: 1.4rem;
+    text-align: right;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-style: italic;
+    color: #999;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: color 0.15s ease;
+}
+
+.file-list li a:hover {
+    background-color: #fff;
+    border-color: #ccc;
+    transform: translateX(2px);
+}
+
+.file-list li a:hover::before {
+    color: #333;
+}
