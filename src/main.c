@@ -193,7 +193,12 @@ int main() {
             continue;
         }
 
-        char file_list_html[4096] = "<ol class=\"file-list\">\n";
+        char file_list_html[4096] = "";
+
+        char heading[256];
+        snprintf(heading, sizeof(heading), "<h1>%s</h1>\n<ol class=\"file-list\">\n", list_of_folder_names[i]);
+        strcat(file_list_html, heading);
+
         struct dirent *fde; //file directory entry
 
         while((fde = readdir(folder_stream)) != NULL) {
