@@ -56,4 +56,3 @@ dkms.conf
 
 # html files cuz this is ssg source
 *.html
-*.css
