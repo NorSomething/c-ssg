@@ -5,6 +5,57 @@
 
 #include "common.h"
 
+char* parse_images(char* line) {
+
+    if (line == NULL)
+        return NULL;
+
+    size_t line_len = strlen(line);
+    char* output = malloc((line_len*5 + 128) * sizeof(char));
+    if (output == NULL) {
+        perror("Error when parsing images\nExiting...\n");
+        exit(1);
+    }
+
+    //same tech as bold italics func
+    size_t line_reader_pointer = 0;
+    size_t output_writer_pointer = 0;
+
+    while (line_reader_pointer < line_len) {
+
+        if (line_reader_pointer + 5 < line_len && strncmp(&line[line_reader_pointer], "~img=", 5) == 0) {
+            char* closing = strchr(&line[line_reader_pointer+5], '~');
+
+            if (closing != NULL) {
+                size_t img_name_len = closing - (&line[line_reader_pointer+5]);
+
+                char img_name[256];
+                if (img_name_len < sizeof(img_name)) {
+                    strncpy(img_name, &line[line_reader_pointer+5], img_name_len);
+                    img_name[img_name_len] = '\0';
+
+                    char img_html[512];
+                    snprintf(img_html, sizeof(img_html), "<img src=\"../site-imgs/%s\" alt=\"%s\" class=\"site-imgs\">", img_name, img_name);
+                    size_t img_html_len = strlen(img_html);
+                    strcpy(&output[output_writer_pointer], img_html);
+                    output_writer_pointer += img_html_len;
+
+                    //moving poointer past filename
+                    line_reader_pointer += (5 + img_name_len + 1);
+                    continue;
+                }
+            }
+        }
+
+        output[output_writer_pointer++] = line[line_reader_pointer++];
+
+    }
+
+    output[output_writer_pointer] = '\0';
+    return output;
+
+}
+
 int heading_counter(char* line, int* amount_to_skip) {
 
     if (line == NULL)
@@ -181,22 +232,23 @@ char* parse_line(char** line, int n) {
         }
 
         char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_heading);
+        char* img_text = parse_images(bolded_italics_text);
+        free(bolded_italics_text);
 
-        int len_to_check = strlen(bolded_italics_text);
-
-        if (hash_count > 0 && hash_count <= 6 && len_to_check > 0) {
-            snprintf(temp, sizeof(temp), "<h%d>%s</h%d>\n", hash_count, bolded_italics_text, hash_count);
+        if (hash_count > 0 && hash_count <= 6 && strlen(img_text) > 0) {
+            snprintf(temp, sizeof(temp), "<h%d>%s</h%d>\n", hash_count, img_text, hash_count);
         }
         else {
             //if incase we have to include the ** and *
-            free(bolded_italics_text);
-            bolded_italics_text = bold_italics_line_giver(line[i]);
-            snprintf(temp, sizeof(temp), "<p>%s</p>\n", bolded_italics_text);
+            snprintf(temp, sizeof(temp), "<p>%s</p>\n", img_text);
         }
 
-        strcat(output, temp);
-        free(bolded_italics_text);
+        /*
+         * Note: rn you cant do - ~img=img.png~ -> it wont parse
+         */
 
+        strcat(output, temp);
+        free(img_text);
     }
 
 

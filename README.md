@@ -18,6 +18,7 @@ A minimal static site generator written in C.
 
 - Markdown to HTML conversion
 - Automatic navigation bar generation
+- Image support
 - Nested documentation support through folders
 - Shared CSS across every generated page
 - Bottom bar
@@ -29,6 +30,9 @@ A minimal static site generator written in C.
 ```
 .
 ├── src/                # Source code
+├── site-imgs/          # Your site images
+    ├── img1.png
+    ├── img2.png
 ├── markdowns/          # Your markdown files
 │   ├── index.md
 │   ├── about.md
@@ -94,6 +98,16 @@ Clicking **Guides** opens a page containing links to
 
 Each Markdown file inside the folder is also converted into its own HTML page.
 
+### Images
+To insert images into any of the websites, you will have to store the image in the `site-imgs` directory with a unique name and insert the image in the markdown file in the following format : 
+```
+~img=<image name>~
+```
+For example, to insert an image of a cat, file name being `cat.png`, edit the markdown file to contain:
+```
+~img=cat.png
+```
+Save the `cat.png` file in the `site-imgs` directory.
 
 ### Note
 To change the bottom bar, edit the `main.c` file's `#define HTML_BOILERPLATE_ENDING` to change or include whatever footer elements you might need.
@@ -148,7 +162,7 @@ Editing this file changes the appearance of the entire website.
 ## Todo
 
 - [ ] Code blocks
-- [ ] Images
+- [x] Images
 - [ ] Page titles
 - [ ] Links
 - [ ] Blockquotes

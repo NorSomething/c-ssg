@@ -4,3 +4,5 @@
 - nirmal 
 
 this is a *test*
+
+~img=muffy.~

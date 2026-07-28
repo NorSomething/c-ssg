@@ -149,3 +149,12 @@ body {
     display: flex;
     gap: 1.25rem;
 }
+
+img,
+.site-imgs {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 20px auto;
+    border-radius: 8px;
+}
