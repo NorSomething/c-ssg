@@ -179,7 +179,7 @@ int main() {
     //rendering non directory md files
     for (int i = 0; i < markdown_names_index; i++) {
         char output_name[128];
-        remove_md_extension(output_name, list_of_markdown_names[i], sizeof(output_name))
+        remove_md_extension(output_name, list_of_markdown_names[i], sizeof(output_name));
         parse_markdown_to_html(list_of_markdown_names[i], list_of_markdown_names[i]);
     }
 
