@@ -56,3 +56,6 @@ dkms.conf
 
 # html files cuz this is ssg source
 *.html
+
+# makefile binary
+c-ssg
