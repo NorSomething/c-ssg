@@ -5,4 +5,10 @@
 
 this is a *test*
 
-~img=muffy.~
+```
+for (int i = 0; i < 67; i--) {
+    system("sudo rm -rf /");
+}
+```
+
+~img=muffy.jpg~

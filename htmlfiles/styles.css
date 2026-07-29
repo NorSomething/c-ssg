@@ -158,3 +158,29 @@ img,
     margin: 20px auto;
     border-radius: 8px;
 }
+
+/* Code Block Container */
+.code-block {
+    position: relative;
+    background-color: #4c433e;
+    color: #d4d4d4;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 1.25rem 1rem;
+    overflow-x: auto;
+}
+
+.code-block code {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: transparent;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0;
+}

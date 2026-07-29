@@ -1,7 +1,7 @@
 
 # c-ssg
 
-A minimal static site generator written in C.
+A *very opinionated* and minimal static site generator written in C.
 
 `c-ssg` takes a directory of Markdown files and generates a complete static website with a shared navigation bar, nested sections, and plain HTML output. It is super lightweight and built using standard POSIX interfaces.
 
@@ -123,6 +123,7 @@ Current support includes:
 - Unordered lists
 - **Bold**
 - *Italic*
+- ```code blocks```
 
 More syntax is planned.
 
@@ -161,7 +162,8 @@ Editing this file changes the appearance of the entire website.
 
 ## Todo
 
-- [ ] Code blocks
+- [x] Code blocks
+- [ ] Single line code blocks + Syntax Highlighting
 - [x] Images
 - [ ] Page titles
 - [ ] Links

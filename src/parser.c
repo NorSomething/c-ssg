@@ -203,9 +203,29 @@ char* parse_line(char** line, int n) {
     }
 
     output[0] = '\0';
+
+    //code blocks and lists handled same way
     int in_list = 0;
+    int in_code_block = 0;
 
     for (int i = 0; i < n; i++) {
+
+        if (strncmp(line[i], "```", 3) == 0) {
+            in_code_block = !in_code_block;
+            if (in_code_block) {
+                strcat(output, "<div class=\"code-block\"><pre><code>");
+            }
+            else {
+                strcat(output, "</code></pre>\n</div>\n");
+            }
+            continue; //dont process ``` line
+        }
+
+        if (in_code_block) {
+            strcat(output, line[i]);
+            strcat(output, "\n");
+            continue;
+        }
 
         char temp[1024];
         int amount_to_skip_heading = 0;
@@ -244,13 +264,21 @@ char* parse_line(char** line, int n) {
         }
 
         /*
-         * Note: rn you cant do - ~img=img.png~ -> it wont parse
+         * Note: rn you cant do "- ~img=img.png~" -> it wont parse
          */
 
         strcat(output, temp);
         free(img_text);
     }
 
+    //safety measures
+    if (in_code_block) {
+        strcat(output, "</code></pre>\n</div>\n");
+    }
+
+    if (in_list) {
+        strcat(output, "</ul>\n");
+    }
 
     if (output != NULL) {
         return output;
