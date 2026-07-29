@@ -66,7 +66,7 @@ struct each_file get_struct(char* markdown_file_name) {
     int line_count = 0;
 
     char path_buffer[128];
-    snprintf(path_buffer, sizeof(path_buffer), "../markdowns/%s", markdown_file_name);
+    snprintf(path_buffer, sizeof(path_buffer), "markdowns/%s", markdown_file_name);
 
     char **lines = file_reader(path_buffer, &line_count);
 

@@ -64,7 +64,7 @@ void remove_md_extension(char* out, char* in, size_t out_size) {
 void make_html_page(char* output, char* body) {
 
     char temp[256];
-    snprintf(temp, sizeof(temp), "../htmlfiles/%s.html", output);
+    snprintf(temp, sizeof(temp), "htmlfiles/%s.html", output);
     FILE *fp = fopen(temp, "w");
     if (fp == NULL) {
         perror("Error when makign html file..");
@@ -110,7 +110,7 @@ int main() {
     int folder_name_index = 0;
 
     struct dirent *de; //dirent entry
-    DIR *dir_stream = opendir("../markdowns");
+    DIR *dir_stream = opendir("markdowns");
     if (dir_stream == NULL) {
         perror("Error while opening the markdown directory");
         exit(1);
@@ -124,7 +124,7 @@ int main() {
 
         //if subfolder remember it
         char full_path[512];
-        snprintf(full_path, sizeof(full_path), "../markdowns/%s", de->d_name);
+        snprintf(full_path, sizeof(full_path), "markdowns/%s", de->d_name);
 
         struct stat st;
         if (stat(full_path, &st) == 0 && S_ISDIR(st.st_mode)) {
@@ -185,7 +185,7 @@ int main() {
     for (int i = 0; i < folder_name_index; i++) {
 
         char folder_path[256];
-        snprintf(folder_path, sizeof(folder_path), "../markdowns/%s", list_of_folder_names[i]);
+        snprintf(folder_path, sizeof(folder_path), "markdowns/%s", list_of_folder_names[i]);
 
         DIR* folder_stream = opendir(folder_path);
         if (folder_stream == NULL) {
