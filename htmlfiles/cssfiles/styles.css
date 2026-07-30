@@ -1,0 +1,186 @@
+/*
+    this entire file is vibe coded cuz i cannot be bothered to write css lol
+*/
+
+/* Reset and global styles */
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Minimal Top Bar Navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    background-color: #fafafa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+    color: #000;
+}
+
+/* Container to keep parsed markdown looking neat */
+.content-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    flex: 1 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.navbar a.active {
+    color: #000;
+    font-weight: 700;
+    border-bottom: 2px solid #333;
+}
+
+/* Folder file-listing (auto-generated <ol class="file-list">) */
+.file-list {
+    list-style: none;
+    counter-reset: file-counter;
+    margin: 1.5rem 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.file-list li {
+    counter-increment: file-counter;
+    position: relative;
+}
+
+.file-list li a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 0.85rem 1.1rem;
+    background-color: #fafafa;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.file-list li a::before {
+    content: counter(file-counter) ".";
+    flex: 0 0 auto;
+    min-width: 1.4rem;
+    text-align: right;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-style: italic;
+    color: #999;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: color 0.15s ease;
+}
+
+.file-list li a:hover {
+    background-color: #fff;
+    border-color: #ccc;
+    transform: translateX(2px);
+}
+
+.file-list li a:hover::before {
+    color: #333;
+}
+
+/* Bottom bar */
+.site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 3rem 0 0;
+    padding: 1rem 2rem;
+    border-top: 1px solid #eaeaea;
+    font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.site-footer a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.site-footer a:hover {
+    color: #000;
+}
+
+.footer-credit a {
+    font-style: italic;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.25rem;
+}
+
+img,
+.site-imgs {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 20px auto;
+    border-radius: 8px;
+}
+
+/* Code Block Container */
+.code-block {
+    position: relative;
+    background-color: #4c433e;
+    color: #d4d4d4;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 1.25rem 1rem;
+    overflow-x: auto;
+}
+
+.code-block code {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: transparent;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0;
+}

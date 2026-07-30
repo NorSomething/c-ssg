@@ -14,7 +14,7 @@
 "    <meta charset=\"UTF-8\">\n" \
 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" \
 "    <title>Document</title>\n" \
-"    <link rel=\"stylesheet\" href=\"styles.css\">\n" \
+"    <link rel=\"stylesheet\" href=\"cssfiles/styles.css\">\n" \
 "</head>\n" \
 "<body>\n" \
 "\n" \
@@ -156,7 +156,7 @@ int main() {
         remove_md_extension(link_name, list_of_markdown_names[i], sizeof(link_name));
 
         char link_buffer[256];
-        snprintf(link_buffer, sizeof(link_buffer), "    <a href=\"%s.html\">%s</a>\n", list_of_markdown_names[i], link_name);
+        snprintf(link_buffer, sizeof(link_buffer), "    <a href=\"%s.html\">%s</a>\n", link_name, link_name);
         strcat(navbar_html, link_buffer);
 
     }
