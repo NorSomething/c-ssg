@@ -39,8 +39,9 @@ A *very opinionated* and minimal static site generator written in C.
 │   └── guides/
 │       ├── install.md
 │       └── usage.md
+├── cssfiles/           # Your global css files
+    ├── styles.css
 ├── htmlfiles/          # Generated HTML and CSS
-│   ├── styles.css
 │   ├── index.html
 │   ├── about.html
 │   ├── guides.html
@@ -131,11 +132,10 @@ More syntax is planned.
 
 ## Building
 
-Compile the source files with GCC.
+Build using the included makefile.
 
 ```bash
-cd src
-gcc *.c -o c-ssg
+make
 ```
 
 Run the generator:
@@ -153,7 +153,7 @@ Generated files will appear inside `htmlfiles/`.
 The generated pages all share the same stylesheet.
 
 ```
-htmlfiles/styles.css
+cssfiles/styles.css
 ```
 
 Editing this file changes the appearance of the entire website.
