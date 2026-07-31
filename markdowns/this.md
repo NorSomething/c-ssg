@@ -1,3 +1,7 @@
+---
+title : huu
+---
+
 ## Hi everyone
 
 this is a paragraph

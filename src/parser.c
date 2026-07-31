@@ -5,6 +5,12 @@
 
 #include "common.h"
 
+struct frontmatter fm;
+
+struct frontmatter* get_filled_metadata() {
+    return &fm;
+}
+
 char* parse_images(char* line) {
 
     if (line == NULL)
@@ -208,7 +214,39 @@ char* parse_line(char** line, int n) {
     int in_list = 0;
     int in_code_block = 0;
 
-    for (int i = 0; i < n; i++) {
+    //metadata parsing vars
+    int metadata_pointer = 0;
+    char *delimiters = " : \t\n";
+    fm.count = 0;
+
+    if (strncmp(line[0], "---", 3) == 0) {
+
+        while (1) {
+
+            metadata_pointer++;
+
+            if (strncmp(line[metadata_pointer], "---", 3) == 0) {
+                break;
+            }
+
+            char *keyy = strtok(line[metadata_pointer], delimiters);
+            char *valuee = strtok(NULL, delimiters);
+
+            if (!(keyy && valuee)) {
+                perror("something went wrong in parsing metadata..\nexiting...");
+                exit(1);
+            }
+
+            strcpy(fm.entries[fm.count].key, keyy);
+            strcpy(fm.entries[fm.count].value, valuee);
+            fm.count++;
+
+        }
+        metadata_pointer++; //extra one to skip the ending ---
+
+    }
+
+    for (int i = metadata_pointer; i < n; i++) {
 
         if (strncmp(line[i], "```", 3) == 0) {
             in_code_block = !in_code_block;

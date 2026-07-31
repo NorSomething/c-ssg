@@ -49,6 +49,33 @@
 //global navbar on every page
 char navbar_html[8192] = "<nav class=\"navbar\">\n";
 
+char* get_meta(struct frontmatter* fm, const char* key) {
+    for (int i = 0; i < fm->count; i++) {
+        if (strcmp(fm->entries[i].key, key) == 0) {
+            return fm->entries[i].value;
+        }
+    }
+    return NULL;
+}
+
+void add_top_of_html(const char* value, FILE* fp) {
+
+    char temp[1024];
+    snprintf(temp, sizeof(temp), "<!DOCTYPE html>\n" \
+    "<html lang=\"en\">\n" \
+    "<head>\n" \
+    "    <meta charset=\"UTF-8\">\n" \
+    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" \
+    "    <title>%s</title>\n" \
+    "    <link rel=\"stylesheet\" href=\"cssfiles/styles.css\">\n" \
+    "</head>\n" \
+    "<body>\n" \
+    "\n", value);
+
+    fputs(temp, fp);
+
+}
+
 void remove_md_extension(char* out, char* in, size_t out_size) {
 
     strncpy(out, in, out_size-1);
@@ -63,6 +90,13 @@ void remove_md_extension(char* out, char* in, size_t out_size) {
 
 void make_html_page(char* output, char* body) {
 
+    struct frontmatter *fm = get_filled_metadata();
+    char* page_title = get_meta(fm, "title");
+
+    if (page_title == NULL) {
+        page_title = output;
+    }
+
     char temp[256];
     snprintf(temp, sizeof(temp), "htmlfiles/%s.html", output);
     FILE *fp = fopen(temp, "w");
@@ -71,7 +105,7 @@ void make_html_page(char* output, char* body) {
         exit(1);
     }
 
-    fputs(HTML_BOILERPLATE, fp);
+    add_top_of_html(page_title, fp);
     fputs(navbar_html, fp);
     fputs(body, fp);
     fputs(HTML_BOILERPLATE_ENDING, fp);
