@@ -5,8 +5,9 @@ A *very opinionated* and minimal static site generator written in C.
 
 `c-ssg` takes a directory of Markdown files and generates a complete static website with a shared navigation bar, nested sections, and plain HTML output. It is super lightweight and built using standard POSIX interfaces.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2d50ed90-d077-4a73-b133-3f7043e11ad6" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ee9339c6-bb1c-44db-b37f-c65cc9e60f81" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/95fd0335-119a-4c4d-9b9d-004cdf09ee24" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/013ae604-0910-4b04-98d3-f60f42ee6223" />
+
 
 
 
@@ -22,6 +23,7 @@ A *very opinionated* and minimal static site generator written in C.
 - Nested documentation support through folders
 - Shared CSS across every generated page
 - Bottom bar
+- Front matter metadata support
 
 ---
 
@@ -110,6 +112,16 @@ For example, to insert an image of a cat, file name being `cat.png`, edit the ma
 ```
 Save the `cat.png` file in the `site-imgs` directory.
 
+### Metadata 
+To change the metadata of every html page, such as title, date, etc., the following frontmatter metadata format should be used in the markdown files.
+```
+---
+title : <pagetitle>
+---
+Your markdown content
+```
+As of now, there is only support for the website's title tag, more keys are planned in the future.
+
 ### Note
 To change the bottom bar, edit the `main.c` file's `#define HTML_BOILERPLATE_ENDING` to change or include whatever footer elements you might need.
 
@@ -165,7 +177,8 @@ Editing this file changes the appearance of the entire website.
 - [x] Code blocks
 - [ ] Single line code blocks + Syntax Highlighting
 - [x] Images
-- [ ] Page titles
+- [x] Page titles
+- [ ] More metadata support
 - [ ] Links
 - [ ] Blockquotes
 - [ ] Ordered lists
