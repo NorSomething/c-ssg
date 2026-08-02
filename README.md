@@ -137,6 +137,7 @@ Current support includes:
 - **Bold**
 - *Italic*
 - ```code blocks```
+- [Links](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 More syntax is planned.
 
@@ -179,7 +180,7 @@ Editing this file changes the appearance of the entire website.
 - [x] Images
 - [x] Page titles
 - [ ] More metadata support
-- [ ] Links
+- [x] Links
 - [ ] Blockquotes
 - [ ] Ordered lists
 - [ ] Tables
