@@ -1,15 +1,21 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 
-all: c-ssg
+all: build
 
 c-ssg:
-	$(CC) ./src/*.c -o c-ssg
+	$(CC) $(CFLAGS) ./src/*.c -o c-ssg
 
-run: c-ssg
+build: c-ssg
+	mkdir htmlfiles
 	./c-ssg
+	cp -r cssfiles htmlfiles/
+	cp -r site-imgs htmlfiles/
+
+run: build
 
 clean:
 	rm -f c-ssg
+	rm -rf htmlfiles
 
-.PHONY: all run clean
+.PHONY: all build run clean

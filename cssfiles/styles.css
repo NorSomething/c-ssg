@@ -184,3 +184,16 @@ img,
     font-weight: 700;
     padding: 0;
 }
+
+.content-container a {
+    color: #000;
+    text-decoration: underline;
+}
+
+.content-container a:visited {
+    color: #000;
+}
+
+.content-container a:hover {
+    color: #333;
+}
