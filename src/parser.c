@@ -11,6 +11,69 @@ struct frontmatter* get_filled_metadata() {
     return &fm;
 }
 
+char* parse_links(char* line) {
+
+    if (line == NULL)
+        return NULL;
+
+    size_t line_len = strlen(line);
+    char* output = malloc((line_len*5 + 128) * sizeof(char)); //safe limit
+    if (output == NULL) {
+        perror("Error when parsing links\nExiting...\n");
+        exit(1);
+    }
+
+    //same tech again
+    size_t line_reader_pointer = 0;
+    size_t output_writer_pointer = 0;
+
+    while(line_reader_pointer < line_len) {
+
+        if (line_reader_pointer + 1 < line_len && line[line_reader_pointer] == '[') {
+            char* closing_link_name = strchr(&line[line_reader_pointer+1], ']');
+
+            if (closing_link_name != NULL && *(closing_link_name+1) == '(') {
+                char* closing_link_addr = strchr(closing_link_name+2, ')');
+
+                if (closing_link_addr != NULL) {
+
+                    size_t link_name_len = closing_link_name - (&line[line_reader_pointer+1]);
+                    size_t link_addr_len = closing_link_addr - (closing_link_name+2);
+
+                    char link_name[256];
+                    char link_addr[256];
+
+                    if (link_name_len < sizeof(link_name) && link_addr_len < sizeof(link_addr)) {
+
+                        strncpy(link_name, &line[line_reader_pointer+1], link_name_len);
+                        link_name[link_name_len] = '\0';
+
+                        strncpy(link_addr, closing_link_name+2, link_addr_len);
+                        link_addr[link_addr_len] = '\0';
+
+                        char final_html[512];
+                        snprintf(final_html, sizeof(final_html), "<a href=\"%s\">%s</a>", link_addr, link_name);
+                        size_t final_html_len = strlen(final_html);
+
+                        strcpy(&output[output_writer_pointer], final_html);
+                        output_writer_pointer += final_html_len;
+
+                        //moving pointer past []() stuff
+                        line_reader_pointer = (closing_link_addr - line) + 1;
+                        continue;
+
+                    }
+                }
+            }
+        }
+        output[output_writer_pointer++] = line[line_reader_pointer++];
+    }
+
+    output[output_writer_pointer] = '\0';
+    return output;
+
+}
+
 char* parse_images(char* line) {
 
     if (line == NULL)
@@ -290,8 +353,10 @@ char* parse_line(char** line, int n) {
         }
 
         char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_heading);
-        char* img_text = parse_images(bolded_italics_text);
+        char* linked_text = parse_links(bolded_italics_text);
+        char* img_text = parse_images(linked_text);
         free(bolded_italics_text);
+        free(linked_text);
 
         if (hash_count > 0 && hash_count <= 6 && strlen(img_text) > 0) {
             snprintf(temp, sizeof(temp), "<h%d>%s</h%d>\n", hash_count, img_text, hash_count);
