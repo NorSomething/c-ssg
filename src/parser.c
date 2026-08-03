@@ -164,6 +164,55 @@ int list_item_checker(char* line, int* amount_to_skip) {
 
 }
 
+char* single_line_codeblock_giver(char *line) {
+
+    if (line == NULL)
+        return NULL;
+
+    size_t line_len = strlen(line);
+
+    char* output = malloc((line_len*10+1)*sizeof(char)); //worse case buffer expansion
+    if (output == NULL) {
+        perror("Error when parsing single line code blocks..\n");
+        exit(1);
+    }
+
+    size_t line_reader_pointer = 0;
+    size_t output_writer_pointer = 0;
+
+    while(line_reader_pointer < line_len) {
+
+        if (line_reader_pointer+1 < line_len && line[line_reader_pointer] == '`') {
+
+            char* closing = strchr(&line[line_reader_pointer+1], '`');
+            if (closing != NULL) {
+
+                strcpy(&output[output_writer_pointer], "<code class=\"singleline-code-block\">");
+                output_writer_pointer += strlen("<code class=\"singleline-code-block\">");
+                line_reader_pointer += 1;
+
+                while (&line[line_reader_pointer] != closing) {
+                    output[output_writer_pointer++] = line[line_reader_pointer++];
+                }
+
+                strcpy(&output[output_writer_pointer], "</code>");
+                output_writer_pointer += strlen("</code>");
+                line_reader_pointer += 1;
+
+            }
+
+        }
+        else {
+            //normal chars not in code block
+            output[output_writer_pointer++] = line[line_reader_pointer++];
+        }
+    }
+
+    output[output_writer_pointer] = '\0';
+    return output;
+
+}
+
 char* bold_italics_line_giver(char *line) {
 
     if (line == NULL)
@@ -315,6 +364,7 @@ char* parse_line(char** line, int n) {
             in_code_block = !in_code_block;
             if (in_code_block) {
                 strcat(output, "<div class=\"code-block\"><pre><code>");
+                //printf("multiline code block ka strcat of opening tags has finished\n");
             }
             else {
                 strcat(output, "</code></pre>\n</div>\n");
@@ -346,17 +396,25 @@ char* parse_line(char** line, int n) {
 
         if (is_list) {
             char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_list);
-            snprintf(temp, sizeof(temp), "<li>%s</li>\n", bolded_italics_text);
+            char* linked_text = parse_links(bolded_italics_text);
+            char* single_line_codeblocks_text = single_line_codeblock_giver(linked_text);
+            char* img_text = parse_images(single_line_codeblocks_text);
+            snprintf(temp, sizeof(temp), "<li>%s</li>\n", img_text);
             strcat(output, temp);
             free(bolded_italics_text);
+            free(linked_text);
+            free(single_line_codeblocks_text);
+            free(img_text);
             continue;
         }
 
         char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_heading);
         char* linked_text = parse_links(bolded_italics_text);
-        char* img_text = parse_images(linked_text);
+        char* single_line_codeblocks_text = single_line_codeblock_giver(linked_text);
+        char* img_text = parse_images(single_line_codeblocks_text);
         free(bolded_italics_text);
         free(linked_text);
+        free(single_line_codeblocks_text);
 
         if (hash_count > 0 && hash_count <= 6 && strlen(img_text) > 0) {
             snprintf(temp, sizeof(temp), "<h%d>%s</h%d>\n", hash_count, img_text, hash_count);

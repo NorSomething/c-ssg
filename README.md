@@ -177,15 +177,17 @@ Editing this file changes the appearance of the entire website.
 ## Todo
 
 - [x] Code blocks
-- [ ] Single line code blocks + Syntax Highlighting
+- [x] Single line code blocks 
+- [ ] Syntax Highlighting (metadata option)
 - [x] Images
 - [x] Page titles
 - [ ] More metadata support
+- [ ] Checkboxes
 - [x] Links
 - [ ] Blockquotes
 - [ ] Ordered lists
 - [ ] Tables
-- [ ] Better Markdown compatibility
+- [x] Better Markdown compatibility (in list markdown)
 
 ---
 
