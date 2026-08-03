@@ -5,7 +5,7 @@ A *very opinionated* and minimal static site generator written in C.
 
 `c-ssg` takes a directory of Markdown files and generates a complete static website with a shared navigation bar, nested sections, and plain HTML output. It is super lightweight and built using standard POSIX interfaces.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/722a7c98-ec42-402a-9976-3c25a52e2536" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6ec39cc8-0a9f-418a-850d-c76574668817" />
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/013ae604-0910-4b04-98d3-f60f42ee6223" />
 
