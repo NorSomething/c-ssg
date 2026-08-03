@@ -164,7 +164,7 @@ int list_item_checker(char* line, int* amount_to_skip) {
 
 }
 
-char* single_line_codeblock_giver(char *line) {
+char* single_line_codeblock_giver(char* line) {
 
     if (line == NULL)
         return NULL;
@@ -399,7 +399,17 @@ char* parse_line(char** line, int n) {
             char* linked_text = parse_links(bolded_italics_text);
             char* single_line_codeblocks_text = single_line_codeblock_giver(linked_text);
             char* img_text = parse_images(single_line_codeblocks_text);
-            snprintf(temp, sizeof(temp), "<li>%s</li>\n", img_text);
+
+            if (strncmp(img_text, "[ ] ", 4) == 0) {
+                snprintf(temp, sizeof(temp), "<li class=\"checkbox-item\"><input type=\"checkbox\" disabled> %s</li>\n", img_text + 4);
+            }
+            else if (strncmp(img_text, "[x] ", 4) == 0) {
+                snprintf(temp, sizeof(temp), "<li class=\"checkbox-item\"><input type=\"checkbox\" disabled checked> %s</li>\n", img_text + 4);
+            }
+            else {
+                snprintf(temp, sizeof(temp), "<li>%s</li>\n", img_text);
+            }
+
             strcat(output, temp);
             free(bolded_italics_text);
             free(linked_text);

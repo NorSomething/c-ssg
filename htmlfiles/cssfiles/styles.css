@@ -203,3 +203,41 @@ img,
     font-family: "JetBrains Mono", monospace;
     font-size: 0.9em;
 }
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0.15rem 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+    border: 2px solid #222;
+    border-radius: 4px;
+    background: #fff;
+    position: relative;
+    cursor: default;
+    margin: 0;
+}
+
+.checkbox-item input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    width: 5px;
+    height: 9px;
+    border: solid #222;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-item input[type="checkbox"]:disabled {
+    opacity: 1;
+}
