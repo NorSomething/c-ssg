@@ -434,10 +434,6 @@ char* parse_line(char** line, int n) {
             snprintf(temp, sizeof(temp), "<p>%s</p>\n", img_text);
         }
 
-        /*
-         * Note: rn you cant do "- ~img=img.png~" -> it wont parse
-         */
-
         strcat(output, temp);
         free(img_text);
     }

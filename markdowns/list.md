@@ -5,7 +5,8 @@ title : showcase
 ## Hi   
 
 - my name is 
-- nirmal 
+- nirmal
+- woah `cool` 
 
 this is a *test*
 
@@ -15,5 +16,7 @@ for (int i = 0; i < 67; i--) {
 }
 ```
 Here is a hyperlink : [Click me!](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+- [x] Checkbox!
 
 ~img=muffy.jpg~

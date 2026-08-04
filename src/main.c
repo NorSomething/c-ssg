@@ -35,19 +35,31 @@
 "    </span>\n" \
 "</footer>\n" \
 "<script>\n" \
-"  const currentPath = window.location.pathname.split('/').pop();\n" \
-"  document.querySelectorAll('.navbar a').forEach(link => {\n" \
-"    const linkPath = link.getAttribute('href');\n" \
-"    if (linkPath === currentPath || link.href === window.location.href) {\n" \
-"      link.classList.add('active');\n" \
-"    }\n" \
-"  });\n" \
+"const savedTheme = localStorage.getItem('theme');\n" \
+"if (savedTheme) {\n" \
+"  document.documentElement.dataset.theme = savedTheme;\n" \
+"}\n" \
+"\n" \
+"const button = document.getElementById('theme-toggle');\n" \
+"button.onclick = () => {\n" \
+"  const dark = document.documentElement.dataset.theme === 'dark';\n" \
+"  document.documentElement.dataset.theme = dark ? 'light' : 'dark';\n" \
+"  localStorage.setItem('theme', dark ? 'light' : 'dark');\n" \
+"};\n" \
+"\n" \
+"const currentPath = window.location.pathname.split('/').pop();\n" \
+"document.querySelectorAll('.navbar a').forEach(link => {\n" \
+"  const linkPath = link.getAttribute('href');\n" \
+"  if (linkPath === currentPath || link.href === window.location.href) {\n" \
+"    link.classList.add('active');\n" \
+"  }\n" \
+"});\n" \
 "</script>\n" \
 "</body>\n" \
 "</html>"
 
 //global navbar on every page
-char navbar_html[8192] = "<nav class=\"navbar\">\n";
+char navbar_html[8192] = "<nav class=\"navbar\">\n<button id=\"theme-toggle\">Theme Switcher</button>\n";
 
 char* get_meta(struct frontmatter* fm, const char* key) {
     for (int i = 0; i < fm->count; i++) {
