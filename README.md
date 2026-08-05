@@ -140,6 +140,7 @@ Current support includes:
 - ```code blocks```
 - [Links](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 - [x] Checkboxes
+- > Block Quotes
 
 More syntax is planned.
 
@@ -185,7 +186,7 @@ Editing this file changes the appearance of the entire website.
 - [ ] More metadata support
 - [x] Checkboxes
 - [x] Links
-- [ ] Blockquotes
+- [x] Blockquotes
 - [ ] Ordered lists
 - [ ] Tables
 - [x] Better Markdown compatibility (in list markdown)

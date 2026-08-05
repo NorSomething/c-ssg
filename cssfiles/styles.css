@@ -232,44 +232,6 @@ img,
     font-size: 0.9em;
 }
 
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    list-style: none;
-    padding: 0.15rem 0;
-}
-
-.checkbox-item input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 1.15rem;
-    height: 1.15rem;
-    flex-shrink: 0;
-    border: 2px solid var(--checkbox-border);
-    border-radius: 4px;
-    background: var(--bg);
-    position: relative;
-    cursor: default;
-    margin: 0;
-}
-
-.checkbox-item input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    left: 3px;
-    top: -1px;
-    width: 5px;
-    height: 9px;
-    border: solid var(--checkbox-border);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.checkbox-item input[type="checkbox"]:disabled {
-    opacity: 1;
-}
-
 #theme-toggle {
     position: absolute;
     right: 1.5rem;
@@ -300,4 +262,70 @@ img,
     outline: 2px solid var(--border);
     outline-offset: 4px;
     border-radius: 4px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0.15rem 0;
+}
+
+.checkbox-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+
+    margin: 0;
+    cursor: default;
+
+    background: transparent;
+    border: 1.5px solid var(--checkbox-border);
+    border-radius: 3px;
+
+    display: grid;
+    place-items: center;
+}
+
+.checkbox-item input[type="checkbox"]::after {
+    content: "";
+    width: 0.22rem;
+    height: 0.48rem;
+
+    border: solid var(--checkbox-border);
+    border-width: 0 2px 2px 0;
+
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.1s ease;
+}
+
+.checkbox-item input[type="checkbox"]:checked::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.checkbox-item input[type="checkbox"]:disabled {
+    opacity: 1;
+}
+
+.blockquote {
+    margin: 1.5rem 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+
+    border-left: 3px solid var(--border-hover);
+    background: var(--surface);
+
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.blockquote p:first-child {
+    margin-top: 0;
+}
+
+.blockquote p:last-child {
+    margin-bottom: 0;
 }

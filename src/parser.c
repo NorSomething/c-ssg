@@ -406,6 +406,9 @@ char* parse_line(char** line, int n) {
             else if (strncmp(img_text, "[x] ", 4) == 0) {
                 snprintf(temp, sizeof(temp), "<li class=\"checkbox-item\"><input type=\"checkbox\" disabled checked> %s</li>\n", img_text + 4);
             }
+            else if (strncmp(img_text, ">", 1) == 0 && strlen(img_text) > 0) {
+                snprintf(temp, sizeof(temp), "<blockquote class=\"blockquote\"><p>\n%s\n</p></blockquote>", img_text + 2);
+            }
             else {
                 snprintf(temp, sizeof(temp), "<li>%s</li>\n", img_text);
             }
@@ -428,6 +431,9 @@ char* parse_line(char** line, int n) {
 
         if (hash_count > 0 && hash_count <= 6 && strlen(img_text) > 0) {
             snprintf(temp, sizeof(temp), "<h%d>%s</h%d>\n", hash_count, img_text, hash_count);
+        }
+        else if (strncmp(img_text, ">", 1) == 0 && strlen(img_text) > 0) {
+            snprintf(temp, sizeof(temp), "<blockquote class=\"blockquote\"><p>\n%s\n</p></blockquote>", img_text + 2);
         }
         else {
             //if incase we have to include the ** and *
