@@ -409,6 +409,9 @@ char* parse_line(char** line, int n) {
             else if (strncmp(img_text, ">", 1) == 0 && strlen(img_text) > 0) {
                 snprintf(temp, sizeof(temp), "<blockquote class=\"blockquote\"><p>\n%s\n</p></blockquote>", img_text + 2);
             }
+            else if (strncmp(img_text, "---", 3) == 0 && strlen(img_text) > 0) {
+                snprintf(temp, sizeof(temp), "<hr>\n");
+            }
             else {
                 snprintf(temp, sizeof(temp), "<li>%s</li>\n", img_text);
             }
@@ -434,6 +437,9 @@ char* parse_line(char** line, int n) {
         }
         else if (strncmp(img_text, ">", 1) == 0 && strlen(img_text) > 0) {
             snprintf(temp, sizeof(temp), "<blockquote class=\"blockquote\"><p>\n%s\n</p></blockquote>", img_text + 2);
+        }
+        else if (strncmp(img_text, "---", 3) == 0 && strlen(img_text) > 0) {
+           snprintf(temp, sizeof(temp), "<hr>\n");
         }
         else {
             //if incase we have to include the ** and *
