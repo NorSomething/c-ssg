@@ -7,7 +7,7 @@ c-ssg:
 	$(CC) $(CFLAGS) ./src/*.c -o c-ssg
 
 build: c-ssg
-	mkdir htmlfiles
+	mkdir -p htmlfiles
 	./c-ssg
 	cp -r cssfiles htmlfiles/
 	cp -r site-imgs htmlfiles/
