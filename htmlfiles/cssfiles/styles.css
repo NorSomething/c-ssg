@@ -199,6 +199,26 @@ img,
     border-radius: 8px;
 }
 
+.site-vids {
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    margin: 20px auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--surface-2);
+}
+
+.site-vids:focus {
+    outline: none;
+}
+
+.site-vids:focus-visible {
+    outline: 2px solid var(--border-hover);
+    outline-offset: 4px;
+}
+
 /* Code Block Container */
 .code-block {
     position: relative;

@@ -74,6 +74,56 @@ char* parse_links(char* line) {
 
 }
 
+char* parse_videos(char* line) {
+
+    if (line == NULL)
+        return NULL;
+
+    size_t line_len = strlen(line);
+    char* output = malloc((line_len*5 + 128) * sizeof(char));
+    if (output == NULL) {
+        perror("Error when parsing videos\nExiting...\n");
+        exit(1);
+    }
+
+    //same tech, once again
+    size_t line_reader_pointer = 0;
+    size_t output_writer_pointer = 0;
+
+    while (line_reader_pointer < line_len) {
+
+        if (line_reader_pointer + 5 < line_len && strncmp(&line[line_reader_pointer], "~vid=", 5) == 0) {
+            char* closing = strchr(&line[line_reader_pointer+5], '~');
+
+            if (closing != NULL) {
+                size_t vid_name_len = closing - (&line[line_reader_pointer+5]) ;
+
+                char vid_name[256];
+                if (vid_name_len < sizeof(vid_name)) {
+                    strncpy(vid_name, &line[line_reader_pointer+5], vid_name_len);
+                    vid_name[vid_name_len] = '\0';
+
+                    char vid_html[512];
+                    snprintf(vid_html, sizeof(vid_html), "<video controls width=460 class=\"site-vids\">\n <source src=../site-imgs/%s type=\"video/mp4\">\n <source src=../site-imgs/%s type=\"video/webm\"> \nYour browser does not support vid tag (fallback)\n</video>", vid_name, vid_name);
+                    size_t vid_html_len = strlen(vid_html);
+                    strcpy(&output[output_writer_pointer], vid_html);
+                    output_writer_pointer += vid_html_len;
+
+                    //moving past filename
+                    line_reader_pointer += (5 + vid_name_len + 1);
+                    continue;
+                }
+            }
+        }
+
+        output[output_writer_pointer++] = line[line_reader_pointer++];
+    }
+
+    output[output_writer_pointer] = '\0';
+    return output;
+
+}
+
 char* parse_images(char* line) {
 
     if (line == NULL)
@@ -398,7 +448,8 @@ char* parse_line(char** line, int n) {
             char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_list);
             char* linked_text = parse_links(bolded_italics_text);
             char* single_line_codeblocks_text = single_line_codeblock_giver(linked_text);
-            char* img_text = parse_images(single_line_codeblocks_text);
+            char* vid_text = parse_videos(single_line_codeblocks_text);
+            char* img_text = parse_images(vid_text);
 
             if (strncmp(img_text, "[ ] ", 4) == 0) {
                 snprintf(temp, sizeof(temp), "<li class=\"checkbox-item\"><input type=\"checkbox\" disabled> %s</li>\n", img_text + 4);
@@ -427,7 +478,8 @@ char* parse_line(char** line, int n) {
         char* bolded_italics_text = bold_italics_line_giver(line[i] + amount_to_skip_heading);
         char* linked_text = parse_links(bolded_italics_text);
         char* single_line_codeblocks_text = single_line_codeblock_giver(linked_text);
-        char* img_text = parse_images(single_line_codeblocks_text);
+        char* vid_text = parse_videos(single_line_codeblocks_text);
+        char* img_text = parse_images(vid_text);
         free(bolded_italics_text);
         free(linked_text);
         free(single_line_codeblocks_text);

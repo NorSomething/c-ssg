@@ -23,3 +23,6 @@ Here is a hyperlink : [Click me!](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 > We block quoting on this rn :p
 ---
 ~img=muffy.jpg~
+
+---
+~vid=cat.mp4~
