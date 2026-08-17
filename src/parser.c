@@ -382,7 +382,7 @@ char* parse_line(char** line, int n) {
     char *delimiters = ":,";
     fm.count = 0;
 
-    if (strncmp(line[0], "---", 3) == 0) {
+    if (n > 0 && strncmp(line[0], "---", 3) == 0) {
 
         int closed = 0;
 
