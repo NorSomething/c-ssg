@@ -5,9 +5,12 @@ A *very opinionated* and minimal static site generator written in C.
 
 `c-ssg` takes a directory of Markdown files and generates a complete static website with a shared navigation bar, nested sections, and plain HTML output. It is super lightweight and built using standard POSIX interfaces.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5aa4c07c-46aa-4d1d-9e3b-470cf3bf1929" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d16579b9-edea-48fb-8806-a307e28522c7" />
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e7bdd186-199b-40db-b04c-1e16c07e717f" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/99d75776-a5b0-42de-b088-aa11781a5084" />
+
+
 
 
 
@@ -22,6 +25,7 @@ A *very opinionated* and minimal static site generator written in C.
 - Markdown to HTML conversion
 - Automatic navigation bar generation
 - Image support
+- Video support
 - Nested documentation support through folders
 - Shared CSS across every generated page
 - Bottom bar
@@ -115,15 +119,23 @@ For example, to insert an image of a cat, file name being `cat.png`, edit the ma
 ```
 Save the `cat.png` file in the `site-imgs` directory.
 
+### Videos
+Videos insertion follow the same syntax as images.
+```
+~vid=cat.mp4~
+```
+Save the `cat.mp4` file in the `site-imgs` directory as well.
+
 ### Metadata 
 To change the metadata of every html page, such as title, date, etc., the following frontmatter metadata format should be used in the markdown files.
 ```
 ---
-title : <pagetitle>
+title: <pagetitle>
+tags: <tag1>, <tag2>, <tag3>
 ---
 Your markdown content
 ```
-As of now, there is only support for the website's title tag, more keys are planned in the future.
+As of now, there is only support for the website's title tag and tags for the markdown files inside the nested directory in `/markdowns`, more keys are planned in the future.
 
 ### Note
 To change the bottom bar, edit the `main.c` file's `#define HTML_BOILERPLATE_ENDING` to change or include whatever footer elements you might need.
@@ -187,6 +199,8 @@ Editing this file changes the appearance of the entire website.
 - [x] Images
 - [x] Page titles
 - [ ] More metadata support
+- [ ] Searchable and filterable tags (from frontmatter)
+- [ ] Extend tags frontmatter to different metadata keys.
 - [x] Checkboxes
 - [x] Links
 - [x] Blockquotes
