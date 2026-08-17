@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -378,33 +379,80 @@ char* parse_line(char** line, int n) {
 
     //metadata parsing vars
     int metadata_pointer = 0;
-    char *delimiters = " : \t\n";
+    char *delimiters = ":,";
     fm.count = 0;
 
     if (strncmp(line[0], "---", 3) == 0) {
+
+        int closed = 0;
 
         while (1) {
 
             metadata_pointer++;
 
-            if (strncmp(line[metadata_pointer], "---", 3) == 0) {
+            //bail out instead of reading off the end of line[] if there's no closing ---
+            // good safety check added by c-laudey : ill keep it
+            if (metadata_pointer >= n) {
+                printf("Warning: frontmatter never closed with '---', stopping metadata parse early.\n");
                 break;
             }
 
-            char *keyy = strtok(line[metadata_pointer], delimiters);
-            char *valuee = strtok(NULL, delimiters);
-
-            if (!(keyy && valuee)) {
-                perror("something went wrong in parsing metadata..\nexiting...");
-                exit(1);
+            if (strncmp(line[metadata_pointer], "---", 3) == 0) {
+                closed = 1;
+                break;
             }
 
-            strcpy(fm.entries[fm.count].key, keyy);
-            strcpy(fm.entries[fm.count].value, valuee);
-            fm.count++;
+            //printf("Line metadata pointer rn is : %s \n", line[metadata_pointer]);
+            char *keyy = strtok(line[metadata_pointer], delimiters);
+            if (keyy == NULL)
+               continue;
+            char *valuee = strtok(NULL, delimiters);
+            size_t key_len = strlen(keyy);
+
+            //trimming whitespaces ~ Paper (Quantum Mango)
+            for (size_t i = key_len-1; i >= 0; i--) {
+                if (!isspace(keyy[i])) {
+                    keyy[i+1] = 0;
+                    break;
+                }
+            }
+
+            if (strcmp(keyy, "tags") == 0) {
+                //char** site_tags = malloc(sizeof(valuee));
+                while(valuee != NULL) {
+                    while (*valuee == ' ') valuee++;
+
+                        if (strlen(valuee) > 0) {
+                            strcpy(fm.entries[fm.count].key, "tag");
+                            strcpy(fm.entries[fm.count].value, valuee);
+                            fm.count++;
+                        }
+
+                        // Get next tag separated by comma/colon
+                        valuee = strtok(NULL, delimiters);
+                }
+            }
+            else {
+
+                //malformed line (no value found) - warn and skip instead of killing the whole build
+                // if (valuee == NULL) {
+                //     printf("Warning: couldn't parse metadata line '%s', skipping it.\n", keyy);
+                //     continue;
+                // }
+
+                while (*valuee == ' ') valuee++; //trim leading space, same as tags above
+
+                strcpy(fm.entries[fm.count].key, keyy);
+                strcpy(fm.entries[fm.count].value, valuee);
+                fm.count++;
+
+            }
 
         }
-        metadata_pointer++; //extra one to skip the ending ---
+
+        if (closed) {
+            metadata_pointer++; //extra one to skip the ending ---
+        }
 
     }
 

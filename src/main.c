@@ -70,7 +70,7 @@ char* get_meta(struct frontmatter* fm, const char* key) {
     return NULL;
 }
 
-void add_top_of_html(const char* value, FILE* fp) {
+void add_top_of_html(const char* title, FILE* fp) {
 
     char temp[1024];
     snprintf(temp, sizeof(temp), "<!DOCTYPE html>\n" \
@@ -82,10 +82,18 @@ void add_top_of_html(const char* value, FILE* fp) {
     "    <link rel=\"stylesheet\" href=\"cssfiles/styles.css\">\n" \
     "</head>\n" \
     "<body>\n" \
-    "\n", value);
+    "\n", title);
 
     fputs(temp, fp);
 
+}
+void print_all_tags(struct frontmatter* fm) {
+    printf("Hi, print_all_tags function was called. Bye\n");
+    for (int i = 0; i < fm->count; i++) {
+        if (strcmp(fm->entries[i].key, "tag") == 0 || strcmp(fm->entries[i].key, "tags") == 0) {
+            printf("Found tag: %s\n", fm->entries[i].value);
+        }
+    }
 }
 
 void remove_md_extension(char* out, char* in, size_t out_size) {
@@ -104,10 +112,15 @@ void make_html_page(char* output, char* body) {
 
     struct frontmatter *fm = get_filled_metadata();
     char* page_title = get_meta(fm, "title");
+    char* tags = get_meta(fm, "tags");
 
     if (page_title == NULL) {
         page_title = output;
     }
+
+    /*if (tags == NULL) {
+        tags = output;
+    }*/
 
     char temp[256];
     snprintf(temp, sizeof(temp), "htmlfiles/%s.html", output);
@@ -118,6 +131,7 @@ void make_html_page(char* output, char* body) {
     }
 
     add_top_of_html(page_title, fp);
+    print_all_tags(fm);
     fputs(navbar_html, fp);
     fputs(body, fp);
     fputs(HTML_BOILERPLATE_ENDING, fp);

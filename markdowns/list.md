@@ -1,5 +1,6 @@
 ---
-title : showcase
+title  : showcase
+tags:       tag1, tag2
 ---
 
 ## Hi   
