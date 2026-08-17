@@ -88,11 +88,32 @@ void add_top_of_html(const char* title, FILE* fp) {
 
 }
 void print_all_tags(struct frontmatter* fm) {
-    printf("Hi, print_all_tags function was called. Bye\n");
     for (int i = 0; i < fm->count; i++) {
         if (strcmp(fm->entries[i].key, "tag") == 0 || strcmp(fm->entries[i].key, "tags") == 0) {
             printf("Found tag: %s\n", fm->entries[i].value);
         }
+    }
+}
+
+void build_tags_html(struct frontmatter* fm, char* out, size_t out_size) {
+    out[0] = '\0'; //lowk no idea why we need this.. </3
+    int has_tags = 0;
+
+    for (int i = 0; i < fm->count; i++) {
+        if (strcmp(fm->entries[i].key, "tag") != 0) {
+            continue;
+        }
+        if (!has_tags) {
+            strncat(out, " <span class=\"tags\">", out_size - strlen(out) - 1);
+            has_tags = 1;
+        }
+        char tag_span_html[512];
+        snprintf(tag_span_html, sizeof(tag_span_html), "<span class=\"tag\">%s</span>", fm->entries[i].value);
+        strncat(out, tag_span_html, out_size - strlen(out) - 1);
+    }
+
+    if (has_tags) {
+        strncat(out, "</span>", out_size - strlen(out) - 1);
     }
 }
 
@@ -282,14 +303,17 @@ int main() {
             char name_of_html[256];
             snprintf(name_of_html, sizeof(name_of_html), "%s__%s", list_of_folder_names[i], link_name);
 
-            char dir_list_buffer[512];
-            snprintf(dir_list_buffer, sizeof(dir_list_buffer), "<li><a href=\"%s.html\">%s</a></li>\n", name_of_html, link_name);
-
             char sub_path[512];
             snprintf(sub_path, sizeof(sub_path), "%s/%s", list_of_folder_names[i], fde->d_name);
-            strcat(file_list_html, dir_list_buffer);
 
-            parse_markdown_to_html(sub_path, name_of_html);
+            parse_markdown_to_html(sub_path, name_of_html); //first this to get filed metadata for tags
+
+            char tags_html[512];
+            build_tags_html(get_filled_metadata(), tags_html, sizeof(tags_html));
+
+            char dir_list_buffer[512];
+            snprintf(dir_list_buffer, sizeof(dir_list_buffer), "<li><a href=\"%s.html\">%s%s</a></li>\n", name_of_html, link_name, tags_html);
+            strcat(file_list_html, dir_list_buffer);
 
         }
 
