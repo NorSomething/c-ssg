@@ -53,7 +53,7 @@ char* parse_links(char* line) {
                         link_addr[link_addr_len] = '\0';
 
                         char final_html[512];
-                        snprintf(final_html, sizeof(final_html), "<a href=\"%s\">%s</a>", link_addr, link_name);
+                        snprintf(final_html, sizeof(final_html), "<a class=\"links\" href=\"%s\">%s</a>", link_addr, link_name);
                         size_t final_html_len = strlen(final_html);
 
                         strcpy(&output[output_writer_pointer], final_html);

@@ -394,3 +394,34 @@ img,
     font-size: 0.7rem;
     background-color: var(--bg);
 }
+
+/* Regular links */
+.links {
+    color: var(--link);
+    text-decoration: none;
+    font-weight: 500;
+
+    border-bottom: 1px solid transparent;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.links:hover {
+    color: var(--text-strong);
+    border-bottom-color: currentColor;
+}
+
+.links:focus {
+    outline: none;
+}
+
+.links:focus-visible {
+    outline: 2px solid var(--border-hover);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+.links:visited {
+    color: var(--link);
+}

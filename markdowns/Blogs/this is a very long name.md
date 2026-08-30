@@ -1,6 +1,6 @@
 ---
 title: testingtags
-tags: tag1, tag2, nirmal 
+tags: hi lol, hello 
 ---
 
 ## Hi   
