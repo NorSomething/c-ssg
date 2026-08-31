@@ -228,18 +228,20 @@ img,
     padding: 1rem 1.2rem;
     margin: 1.5rem 0;
     font-family: 'Courier New', Courier, monospace;
+	font-size: 0.75em;
     overflow-x: auto;
 }
 
 .code-block pre {
     margin: 0;
+	font-size: inherit;
 }
 
 .code-block .singleline-code-block {
     background: none;
     padding: 0;
     color: inherit;
-    font-size: 0.95rem;
+    font-size: inherit;
     font-family: "JetBrains Mono", monospace;
 }
 
@@ -249,7 +251,7 @@ img,
     padding: 0.15rem 0.35rem;
     border-radius: 5px;
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.9em;
+    font-size: 0.75em;
 }
 
 #theme-toggle {
