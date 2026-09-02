@@ -81,7 +81,10 @@ char* parse_videos(char* line) {
         return NULL;
 
     size_t line_len = strlen(line);
-    char* output = malloc((line_len*5 + 128) * sizeof(char));
+
+    size_t capacity = line_len * 20 + 512;
+    char* output = malloc(capacity);
+
     if (output == NULL) {
         perror("Error when parsing videos\nExiting...\n");
         exit(1);
@@ -360,8 +363,7 @@ char* parse_line(char** line, int n) {
     size_t buffer_size = 0;
 
     for (int i = 0; i < n; i++) {
-        buffer_size += (strlen(line[i])*3+16); //ix3 for worst case html tag expansion, 16 for closing
-        buffer_size += 16; //for list tags
+        buffer_size += strlen(line[i]) * 20 + 512;
     }
 
     // output string in heap so that it survies in main.c

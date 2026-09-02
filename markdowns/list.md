@@ -27,3 +27,5 @@ Here is a hyperlink : [Click me!](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ---
 ~vid=cat.mp4~
+
+> I have a blog on this!! Check it out [here](https://norsomething.github.io/Blogs__Linux Screen Locker in X11.html)

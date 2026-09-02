@@ -90,3 +90,5 @@ You also might have noticed this `system-local-login` thingy in our pam file. Wh
 > There are also the `.so` files which are actual PAM modules, the code which contains the instructions/code that deals with stored passwords, hashing and un-hashing them to use as per need. We dont really need to worry about any of these, so we treat them as abstractions! :D
 
 I have this tiny [**bash script**](https://github.com/NorSomething/nock/blob/main/install.sh) for my app that does the entire writing your PAM file for you! 
+> Some of my projects
+
