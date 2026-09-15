@@ -1,3 +1,7 @@
+---
+title: mee 
+resume: https://drive.google.com/file/d/1c4p-lktpWlpGsrK-MSB7-oVEcOXG841Z/view?usp=drive_link
+---
 
 # Nock : X11 lockscreen app
 A super simple **X11 screen locker app** written in **C**, using **XCB** to talk with the **X Display Server**. It leverages **PAM Management Groups**, and using its own PAM file performs what a lockscreen should do!

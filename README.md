@@ -126,19 +126,24 @@ Videos insertion follow the same syntax as images.
 ```
 Save the `cat.mp4` file in the `site-imgs` directory as well.
 
-### Metadata 
-To change the metadata of every html page, such as title, date, etc., the following frontmatter metadata format should be used in the markdown files.
+### Frontmatter and footer links
+
+Each Markdown page may start with frontmatter. The parser splits each entry at its first `:`, so URLs such as `https://...` are preserved in full.
+
 ```
 ---
-title: <pagetitle>
+title: My page title
 tags: <tag1>, <tag2>, <tag3>
+GitHub: https://github.com/<username>
+Resume: https://example.com/resume.pdf
+My blog: https://example.com/blog
 ---
 Your markdown content
 ```
-As of now, there is only support for the website's title tag and tags for the markdown files inside the nested directory in `/markdowns`, more keys are planned in the future.
 
-### Note
-To change the bottom bar, edit the `main.c` file's `#define HTML_BOILERPLATE_ENDING` to change or include whatever footer elements you might need.
+`title` sets the HTML page title and `tags` adds page tags. Every other frontmatter entry becomes a bottom-bar link: the key is its visible label and the value is used unchanged as the anchor's `href`.
+
+For example, `My blog: https://example.com/blog` renders as `<a href="https://example.com/blog">My blog</a>`. Add, edit, or remove these entries to customize that page's bottom bar.
 
 ---
 

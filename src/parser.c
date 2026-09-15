@@ -381,7 +381,6 @@ char* parse_line(char** line, int n) {
 
     //metadata parsing vars
     int metadata_pointer = 0;
-    char *delimiters = ":,";
     fm.count = 0;
 
     if (n > 0 && strncmp(line[0], "---", 3) == 0) {
@@ -404,43 +403,42 @@ char* parse_line(char** line, int n) {
                 break;
             }
 
-            //printf("Line metadata pointer rn is : %s \n", line[metadata_pointer]);
-            char *keyy = strtok(line[metadata_pointer], delimiters);
-            if (keyy == NULL)
-               continue;
-            char *valuee = strtok(NULL, delimiters);
+            //only the first colon separates the key from its value.
+            char *keyy = line[metadata_pointer];
+            char *valuee = strchr(keyy, ':');
+            if (valuee == NULL) {
+                printf("Warning: couldn't parse metadata line '%s', skipping it.\n", keyy);
+                continue;
+            }
+            *valuee++ = '\0';
             size_t key_len = strlen(keyy);
 
             //trimming whitespaces ~ Paper (Quantum Mango)
-            for (size_t i = key_len-1; i >= 0; i--) {
+            while (key_len > 0) {
+                size_t i = key_len - 1;
                 if (!isspace(keyy[i])) {
                     keyy[i+1] = 0;
                     break;
                 }
+                key_len--;
             }
 
             if (strcmp(keyy, "tags") == 0) {
-                //char** site_tags = malloc(sizeof(valuee));
-                while(valuee != NULL) {
-                    while (*valuee == ' ') valuee++;
+                char *tag_value = strtok(valuee, ",");
+                while(tag_value != NULL) {
+                    while (*tag_value == ' ') tag_value++;
 
-                        if (strlen(valuee) > 0) {
-                            strcpy(fm.entries[fm.count].key, "tag");
-                            strcpy(fm.entries[fm.count].value, valuee);
-                            fm.count++;
-                        }
+                    if (strlen(tag_value) > 0) {
+                        strcpy(fm.entries[fm.count].key, "tag");
+                        strcpy(fm.entries[fm.count].value, tag_value);
+                        fm.count++;
+                    }
 
-                        // Get next tag separated by comma/colon
-                        valuee = strtok(NULL, delimiters);
+                    // Get the next tag, separated by a comma.
+                    tag_value = strtok(NULL, ",");
                 }
             }
             else {
-
-                //malformed line (no value found) - warn and skip instead of killing the whole build
-                // if (valuee == NULL) {
-                //     printf("Warning: couldn't parse metadata line '%s', skipping it.\n", keyy);
-                //     continue;
-                // }
 
                 while (*valuee == ' ') valuee++; //trim leading space, same as tags above
 

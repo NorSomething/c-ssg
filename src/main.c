@@ -24,40 +24,6 @@
  * i have no idea how it works
  */
 
-#define HTML_BOILERPLATE_ENDING \
-"</div>\n" \
-"<footer class=\"site-footer\">\n" \
-"    <span class=\"footer-credit\">made with love using <a href=\"https://github.com/NorSomething/c-ssg\" target=\"_blank\">c-ssg</a></span>\n" \
-"    <span class=\"footer-links\">\n" \
-"        <a href=\"https://github.com/NorSomething\" target=\"_blank\">GitHub</a>\n" \
-"        <a href=\"#\">discord: nitmal.</a>\n" \
-"        <a href=\"resume.pdf\" target=\"_blank\">Resume</a>\n" \
-"    </span>\n" \
-"</footer>\n" \
-"<script>\n" \
-"const savedTheme = localStorage.getItem('theme');\n" \
-"if (savedTheme) {\n" \
-"  document.documentElement.dataset.theme = savedTheme;\n" \
-"}\n" \
-"\n" \
-"const button = document.getElementById('theme-toggle');\n" \
-"button.onclick = () => {\n" \
-"  const dark = document.documentElement.dataset.theme === 'dark';\n" \
-"  document.documentElement.dataset.theme = dark ? 'light' : 'dark';\n" \
-"  localStorage.setItem('theme', dark ? 'light' : 'dark');\n" \
-"};\n" \
-"\n" \
-"const currentPath = window.location.pathname.split('/').pop();\n" \
-"document.querySelectorAll('.navbar a').forEach(link => {\n" \
-"  const linkPath = link.getAttribute('href');\n" \
-"  if (linkPath === currentPath || link.href === window.location.href) {\n" \
-"    link.classList.add('active');\n" \
-"  }\n" \
-"});\n" \
-"</script>\n" \
-"</body>\n" \
-"</html>"
-
 //global navbar on every page
 char navbar_html[8192] = "<nav class=\"navbar\">\n<button id=\"theme-toggle\">Theme Switcher</button>\n";
 
@@ -87,6 +53,53 @@ void add_top_of_html(const char* title, FILE* fp) {
     fputs(temp, fp);
 
 }
+
+void add_bottom_of_html(const struct frontmatter* fm, FILE* fp) {
+    fputs("</div>\n"
+"<footer class=\"site-footer\">\n"
+"    <span class=\"footer-credit\">made with love using <a href=\"https://github.com/NorSomething/c-ssg\" target=\"_blank\">c-ssg</a></span>\n"
+"    <span class=\"footer-links\">\n", fp);
+
+    for (int i = 0; i < fm->count; i++) {
+        const char* key = fm->entries[i].key;
+        const char* value = fm->entries[i].value;
+
+        // thse keys describe the page itsel, like not not bottom bar
+		if (strcmp(key, "title") == 0 || strcmp(key, "tag") == 0 || strcmp(key, "tags") == 0) {
+            continue;
+        }
+
+        fprintf(fp, "        <a href=\"%s\" target=\"_blank\">%s</a>\n", value, key);
+    }
+
+    fputs("    </span>\n"
+"</footer>\n"
+"<script>\n" \
+"const savedTheme = localStorage.getItem('theme');\n" \
+"if (savedTheme) {\n" \
+"  document.documentElement.dataset.theme = savedTheme;\n" \
+"}\n" \
+"\n" \
+"const button = document.getElementById('theme-toggle');\n" \
+"button.onclick = () => {\n" \
+"  const dark = document.documentElement.dataset.theme === 'dark';\n" \
+"  document.documentElement.dataset.theme = dark ? 'light' : 'dark';\n" \
+"  localStorage.setItem('theme', dark ? 'light' : 'dark');\n" \
+"};\n" \
+"\n" \
+"const currentPath = window.location.pathname.split('/').pop();\n" \
+"document.querySelectorAll('.navbar a').forEach(link => {\n" \
+"  const linkPath = link.getAttribute('href');\n" \
+"  if (linkPath === currentPath || link.href === window.location.href) {\n" \
+"    link.classList.add('active');\n" \
+"  }\n" \
+"});\n" \
+"</script>\n" \
+"</body>\n" \
+"</html>", fp);
+
+}
+
 void print_all_tags(struct frontmatter* fm) {
     for (int i = 0; i < fm->count; i++) {
         if (strcmp(fm->entries[i].key, "tag") == 0 || strcmp(fm->entries[i].key, "tags") == 0) {
@@ -132,18 +145,15 @@ void remove_md_extension(char* out, char* in, size_t out_size) {
 void make_html_page(char* output, char* body) {
 
     struct frontmatter *fm = get_filled_metadata();
-    char* page_title = get_meta(fm, "title");
-    char* tags = get_meta(fm, "tags");
+    const char* page_title = get_meta(fm, "title");
 
     if (page_title == NULL) {
         page_title = output;
     }
 
-    /*if (tags == NULL) {
-        tags = output;
-    }*/
+	// hmmm do i realllyyy need to add catches for when they dont put tags or will it be caught automatically by my perfect code
 
-    char temp[256];
+	char temp[256];
     snprintf(temp, sizeof(temp), "htmlfiles/%s.html", output);
     FILE *fp = fopen(temp, "w");
     if (fp == NULL) {
@@ -155,7 +165,7 @@ void make_html_page(char* output, char* body) {
     print_all_tags(fm);
     fputs(navbar_html, fp);
     fputs(body, fp);
-    fputs(HTML_BOILERPLATE_ENDING, fp);
+	add_bottom_of_html(fm, fp);
     fclose(fp);
 
 }
