@@ -26,6 +26,7 @@
 
 //global navbar on every page
 char navbar_html[8192] = "<nav class=\"navbar\">\n<button id=\"theme-toggle\">Theme Switcher</button>\n";
+const char *updated_at = "Unknown";
 
 char* get_meta(struct frontmatter* fm, const char* key) {
     for (int i = 0; i < fm->count; i++) {
@@ -56,9 +57,15 @@ void add_top_of_html(const char* title, FILE* fp) {
 
 void add_bottom_of_html(const struct frontmatter* fm, FILE* fp) {
     fputs("</div>\n"
-"<footer class=\"site-footer\">\n"
-"    <span class=\"footer-credit\">made with love using <a href=\"https://github.com/NorSomething/c-ssg\" target=\"_blank\">c-ssg</a></span>\n"
-"    <span class=\"footer-links\">\n", fp);
+    "<footer class=\"site-footer\">\n"
+    "    <span class=\"footer-credit\">made with love using <a href=\"https://github.com/NorSomething/c-ssg\" target=\"_blank\">c-ssg</a></span>\n",
+    fp);
+
+    fprintf(fp,
+        "    <span class=\"footer-updated\">Last updated: %s</span>\n",
+        updated_at);
+
+    fputs("    <span class=\"footer-links\">\n", fp);
 
     for (int i = 0; i < fm->count; i++) {
         const char* key = fm->entries[i].key;
@@ -192,7 +199,13 @@ void parse_markdown_to_html(char* path, char* output) {
 
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    for (int i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "--updated-at") == 0 && i + 1 < argc) {
+                updated_at = argv[++i];
+            }
+        }
 
     char list_of_markdown_names[127][128];
     int markdown_names_index = 0;
