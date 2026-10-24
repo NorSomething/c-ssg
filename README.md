@@ -147,6 +147,19 @@ Your markdown content
 
 For example, `My blog: https://example.com/blog` renders as `<a href="https://example.com/blog">My blog</a>`. Add, edit, or remove these entries to customize that page's bottom bar.
 
+### Searchable tags for Markdown files
+
+Add a comma-separated `tags` entry to a Markdown file's frontmatter to show its tags beside the file in its directory listing and make it searchable there:
+
+```
+---
+title: My post
+tags: C, XCB, Linux
+---
+```
+
+The search bar appears on generated directory pages. It filters that directory's files as you type, ignoring capitalization. You can enter part of a tag (for example, `lin` matches `Linux`), or enter multiple tags separated by commas (for example, `C, XCB`) to show files that match every term. Files without tags won't match a non-empty search.
+
 ---
 
 ## Supported Markdown
@@ -206,7 +219,7 @@ Editing this file changes the appearance of the entire website.
 - [x] Images
 - [x] Page titles
 - [ ] More metadata support
-- [ ] Searchable and filterable tags (from frontmatter)
+- [x] Searchable and filterable tags (from frontmatter)
 - [ ] Extend tags frontmatter to different metadata keys.
 - [x] Checkboxes
 - [x] Links
