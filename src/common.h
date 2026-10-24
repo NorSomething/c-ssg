@@ -5,6 +5,7 @@ struct each_file {
     char* name;
     char** lines;
     int line_count;
+    int head_dir_md;
 };
 
 struct metadata {

@@ -1,6 +1,7 @@
 ---
 title  : showcase
 tags:       tag1, tag2
+searchable_tags: true
 ---
 
 ## Hi   

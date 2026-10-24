@@ -114,6 +114,68 @@ body {
     border-bottom: 2px solid var(--text);
 }
 
+/* Tag search on directory pages */
+#tag-search-form {
+    display: flex;
+    align-items: stretch;
+    gap: 0.55rem;
+    width: min(100%, 24rem);
+    margin: 1rem 0 0;
+}
+
+#tag-search {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border-hover);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+#tag-search::placeholder {
+    color: var(--muted);
+}
+
+#tag-search:focus-visible {
+    outline: none;
+    border-color: var(--link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--link) 18%, transparent);
+    background: var(--bg);
+}
+
+#tag-search-form button {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border-hover);
+    border-radius: 9px;
+    background: var(--text-strong);
+    color: var(--bg);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+#tag-search-form button:hover {
+    opacity: 0.82;
+}
+
+#tag-search-form button:active {
+    transform: translateY(1px);
+}
+
+@media (max-width: 420px) {
+    #tag-search-form {
+        gap: 0.4rem;
+    }
+
+    #tag-search-form button {
+        padding-inline: 0.8rem;
+    }
+}
+
 /* Folder file-listing (auto-generated <ol class="file-list">) */
 .file-list {
     list-style: none;

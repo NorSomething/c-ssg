@@ -107,6 +107,29 @@ void add_bottom_of_html(const struct frontmatter* fm, FILE* fp) {
 
 }
 
+void add_searchable_tags(FILE* fp) {
+    fputs("<form id=\"tag-search-form\">\n"
+          "  <input id=\"tag-search\" type=\"search\" placeholder=\"Search tags...\" aria-label=\"Search tags\">\n"
+          "  <button type=\"submit\">Search</button>\n"
+          "</form>\n"
+          "<script>\n"
+          "document.addEventListener('DOMContentLoaded', () => {\n"
+          "  const tagSearchForm = document.getElementById('tag-search-form');\n"
+          "  const tagSearchInput = document.getElementById('tag-search');\n"
+          "  const blogItems = document.querySelectorAll('.file-list > li');\n"
+          "  function filterBlogsByTags() {\n"
+          "    const terms = tagSearchInput.value.toLocaleLowerCase().split(',').map(term => term.trim()).filter(Boolean);\n"
+          "    blogItems.forEach(item => {\n"
+          "      const tags = Array.from(item.querySelectorAll('.tag')).map(tag => tag.textContent.toLocaleLowerCase());\n"
+          "      item.hidden = !terms.every(term => tags.some(tag => tag.includes(term)));\n"
+          "    });\n"
+          "  }\n"
+          "  tagSearchForm.addEventListener('submit', event => { event.preventDefault(); filterBlogsByTags(); });\n"
+          "  tagSearchInput.addEventListener('input', filterBlogsByTags);\n"
+          "});\n"
+          "</script>\n", fp);
+}
+
 void print_all_tags(struct frontmatter* fm) {
     for (int i = 0; i < fm->count; i++) {
         if (strcmp(fm->entries[i].key, "tag") == 0 || strcmp(fm->entries[i].key, "tags") == 0) {
@@ -149,7 +172,7 @@ void remove_md_extension(char* out, char* in, size_t out_size) {
 
 }
 
-void make_html_page(char* output, char* body) {
+void make_html_page(char* output, char* body, int is_directory_page) {
 
     struct frontmatter *fm = get_filled_metadata();
     const char* page_title = get_meta(fm, "title");
@@ -171,6 +194,11 @@ void make_html_page(char* output, char* body) {
     add_top_of_html(page_title, fp);
     print_all_tags(fm);
     fputs(navbar_html, fp);
+
+    if (is_directory_page) {
+        add_searchable_tags(fp);
+    }
+
     fputs(body, fp);
 	add_bottom_of_html(fm, fp);
     fclose(fp);
@@ -188,8 +216,7 @@ void parse_markdown_to_html(char* path, char* output) {
 
     char *parsed_line = parse_line(file.lines, file.line_count);
 
-    make_html_page(output, parsed_line);
-
+    make_html_page(output, parsed_line, 0); //normal md file
     //cleanup
     free(parsed_line);
     for (int j = 0; j < file.line_count; j++) {
@@ -343,7 +370,7 @@ int main(int argc, char* argv[]) {
         closedir(folder_stream);
         strcat(file_list_html, "</ol>\n");
 
-        make_html_page(list_of_folder_names[i], file_list_html);
+        make_html_page(list_of_folder_names[i], file_list_html, 1); //dir heading name md file
 
     }
 
