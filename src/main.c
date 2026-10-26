@@ -109,7 +109,7 @@ void add_bottom_of_html(const struct frontmatter* fm, FILE* fp) {
 
 void add_searchable_tags(FILE* fp) {
     fputs("<form id=\"tag-search-form\">\n"
-          "  <input id=\"tag-search\" type=\"search\" placeholder=\"Search tags...\" aria-label=\"Search tags\">\n"
+          "  <input id=\"tag-search\" type=\"search\" placeholder=\"Search tags...\" aria-label=\"Search..\">\n"
           "  <button type=\"submit\">Search</button>\n"
           "</form>\n"
           "<script>\n"
