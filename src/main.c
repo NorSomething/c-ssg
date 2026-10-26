@@ -28,6 +28,14 @@
 char navbar_html[8192] = "<nav class=\"navbar\">\n<button id=\"theme-toggle\">Theme Switcher</button>\n";
 const char *updated_at = "Unknown";
 
+static int append_text(char *dst, size_t capacity, const char *src) {
+    size_t used = strlen(dst);
+    size_t extra = strlen(src);
+    if (used >= capacity || extra >= capacity - used) return 0;
+    memcpy(dst + used, src, extra + 1);
+    return 1;
+}
+
 char* get_meta(struct frontmatter* fm, const char* key) {
     for (int i = 0; i < fm->count; i++) {
         if (strcmp(fm->entries[i].key, key) == 0) {
@@ -109,8 +117,7 @@ void add_bottom_of_html(const struct frontmatter* fm, FILE* fp) {
 
 void add_searchable_tags(FILE* fp) {
     fputs("<form id=\"tag-search-form\">\n"
-          "  <input id=\"tag-search\" type=\"search\" placeholder=\"Search tags...\" aria-label=\"Search..\">\n"
-          "  <button type=\"submit\">Search</button>\n"
+          "  <input id=\"tag-search\" type=\"search\" placeholder=\"Search...\" aria-label=\"Search..\">\n"
           "</form>\n"
           "<script>\n"
           "document.addEventListener('DOMContentLoaded', () => {\n"
@@ -215,6 +222,12 @@ void parse_markdown_to_html(char* path, char* output) {
     }
 
     char *parsed_line = parse_line(file.lines, file.line_count);
+    if (parsed_line == NULL) {
+        fprintf(stderr, "Markdown input in %s is too large to render; skipping it.\n", path);
+        for (int j = 0; j < file.line_count; j++) free(file.lines[j]);
+        free(file.lines);
+        return;
+    }
 
     make_html_page(output, parsed_line, 0); //normal md file
     //cleanup
@@ -259,8 +272,15 @@ int main(int argc, char* argv[]) {
 
         struct stat st;
         if (stat(full_path, &st) == 0 && S_ISDIR(st.st_mode)) {
-            strncpy(list_of_folder_names[folder_name_index], de->d_name, 64-1);
-            list_of_markdown_names[folder_name_index][64-1] = '\0';
+            if (strlen(de->d_name) >= sizeof(list_of_folder_names[0])) {
+                fprintf(stderr, "Warning: folder name is too long; skipping %s\n", de->d_name);
+                continue;
+            }
+            if (folder_name_index >= (int)(sizeof(list_of_folder_names) / sizeof(list_of_folder_names[0]))) {
+                fprintf(stderr, "Warning: too many markdown folders; skipping %s\n", de->d_name);
+                continue;
+            }
+            memcpy(list_of_folder_names[folder_name_index], de->d_name, strlen(de->d_name) + 1);
             folder_name_index++;
             continue;
         }
@@ -271,8 +291,16 @@ int main(int argc, char* argv[]) {
             continue;
         }
 
-        strncpy(list_of_markdown_names[markdown_names_index], de->d_name, 128-1);
-        list_of_markdown_names[markdown_names_index][128-1] = '\0';
+        if (len >= sizeof(list_of_markdown_names[0])) {
+            fprintf(stderr, "Warning: markdown filename is too long; skipping %s\n", de->d_name);
+            continue;
+        }
+
+        if (markdown_names_index >= (int)(sizeof(list_of_markdown_names) / sizeof(list_of_markdown_names[0]))) {
+            fprintf(stderr, "Warning: too many markdown files; skipping %s\n", de->d_name);
+            continue;
+        }
+        memcpy(list_of_markdown_names[markdown_names_index], de->d_name, len + 1);
 
         markdown_names_index++;
 
@@ -286,9 +314,12 @@ int main(int argc, char* argv[]) {
         char link_name[128];
         remove_md_extension(link_name, list_of_markdown_names[i], sizeof(link_name));
 
-        char link_buffer[256];
+        char link_buffer[288];
         snprintf(link_buffer, sizeof(link_buffer), "    <a href=\"%s.html\">%s</a>\n", link_name, link_name);
-        strcat(navbar_html, link_buffer);
+        if (!append_text(navbar_html, sizeof(navbar_html), link_buffer)) {
+            fprintf(stderr, "Warning: navigation bar is full; remaining entries are omitted.\n");
+            break;
+        }
 
     }
 
@@ -297,13 +328,16 @@ int main(int argc, char* argv[]) {
 
             char link_buffer[256];
             snprintf(link_buffer, sizeof(link_buffer), "    <a href=\"%s.html\">%s</a>\n", list_of_folder_names[i], list_of_folder_names[i]);
-            strcat(navbar_html, link_buffer);
+            if (!append_text(navbar_html, sizeof(navbar_html), link_buffer)) {
+                fprintf(stderr, "Warning: navigation bar is full; remaining entries are omitted.\n");
+                break;
+            }
 
         }
 
 
     //all the stuff of the .md will be in this div
-    strcat(navbar_html, "</nav>\n<div class=\"content-container\">\n");
+    append_text(navbar_html, sizeof(navbar_html), "</nav>\n<div class=\"content-container\">\n");
 
     printf("Found %d markdown files. \n", markdown_names_index);
 
@@ -330,7 +364,7 @@ int main(int argc, char* argv[]) {
 
         char heading[256];
         snprintf(heading, sizeof(heading), "<h1>%s</h1>\n<ol class=\"file-list\">\n", list_of_folder_names[i]);
-        strcat(file_list_html, heading);
+        append_text(file_list_html, sizeof(file_list_html), heading);
 
         struct dirent *fde; //file directory entry
 
@@ -361,14 +395,17 @@ int main(int argc, char* argv[]) {
             char tags_html[512];
             build_tags_html(get_filled_metadata(), tags_html, sizeof(tags_html));
 
-            char dir_list_buffer[512];
+            char dir_list_buffer[1024];
             snprintf(dir_list_buffer, sizeof(dir_list_buffer), "<li><a href=\"%s.html\">%s%s</a></li>\n", name_of_html, link_name, tags_html);
-            strcat(file_list_html, dir_list_buffer);
+            if (!append_text(file_list_html, sizeof(file_list_html), dir_list_buffer)) {
+                fprintf(stderr, "Warning: listing for %s is full; remaining entries are omitted.\n", list_of_folder_names[i]);
+                break;
+            }
 
         }
 
         closedir(folder_stream);
-        strcat(file_list_html, "</ol>\n");
+        append_text(file_list_html, sizeof(file_list_html), "</ol>\n");
 
         make_html_page(list_of_folder_names[i], file_list_html, 1); //dir heading name md file
 

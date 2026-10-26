@@ -19,6 +19,10 @@ char** file_reader(char* name, int* out_line_count) {
     int capacity = 10;
     int count = 0;
     char **lines = malloc(capacity*sizeof(char*));
+    if (lines == NULL) {
+        fclose(fp);
+        return NULL;
+    }
 
     char *current_line = NULL;
     size_t line_buffer_size = 0;
@@ -34,6 +38,8 @@ char** file_reader(char* name, int* out_line_count) {
                 printf("Realloc failed...\n ");
                 fclose(fp);
                 free(current_line);
+                for (int i = 0; i < count; i++) free(lines[i]);
+                free(lines);
                 return NULL;
             }
             lines = temp;
@@ -46,6 +52,13 @@ char** file_reader(char* name, int* out_line_count) {
 
         //lines live here
         lines[count] = malloc((strlen(current_line)+1)*sizeof(char));
+        if (lines[count] == NULL) {
+            fclose(fp);
+            free(current_line);
+            for (int i = 0; i < count; i++) free(lines[i]);
+            free(lines);
+            return NULL;
+        }
         strcpy(lines[count], current_line);
         count++;
 
@@ -66,7 +79,13 @@ struct each_file get_struct(char* markdown_file_name) {
     int line_count = 0;
 
     char path_buffer[128];
-    snprintf(path_buffer, sizeof(path_buffer), "markdowns/%s", markdown_file_name);
+    int path_length = snprintf(path_buffer, sizeof(path_buffer), "markdowns/%s", markdown_file_name);
+    if (path_length < 0 || (size_t)path_length >= sizeof(path_buffer)) {
+        markdown_file.lines = NULL;
+        markdown_file.name = markdown_file_name;
+        markdown_file.line_count = 0;
+        return markdown_file;
+    }
 
     char **lines = file_reader(path_buffer, &line_count);
 

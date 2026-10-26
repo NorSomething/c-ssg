@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,13 +13,45 @@ struct frontmatter* get_filled_metadata() {
     return &fm;
 }
 
+//this funciton is AI's idea for safe C :fire:
+static void append_escaped_text(char *out, size_t capacity, size_t *used, const char *text) {
+    for (const unsigned char *p = (const unsigned char *)text; *p != '\0'; p++) {
+        const char *entity = NULL;
+        if (*p == '&') entity = "&amp;";
+        else if (*p == '<') entity = "&lt;";
+        else if (*p == '>') entity = "&gt;";
+        if (entity != NULL) {
+            size_t n = strlen(entity);
+            if (n >= capacity - *used) return;
+            memcpy(out + *used, entity, n);
+            *used += n;
+        } else {
+            if (*used + 1 >= capacity) return;
+            out[(*used)++] = (char)*p;
+        }
+    }
+    out[*used] = '\0';
+}
+
+static int store_metadata(const char *key, const char *value) {
+    if (fm.count >= (int)(sizeof(fm.entries) / sizeof(fm.entries[0])) || strlen(key) >= sizeof(fm.entries[0].key) ||strlen(value) >= sizeof(fm.entries[0].value)) {
+        fprintf(stderr, "Warning: frontmatter entry is too large or there are too many entries; skipping it.\n");
+        return 0;
+    }
+    snprintf(fm.entries[fm.count].key, sizeof(fm.entries[fm.count].key), "%s", key);
+    snprintf(fm.entries[fm.count].value, sizeof(fm.entries[fm.count].value), "%s", value);
+    fm.count++;
+    return 1;
+}
+
 char* parse_links(char* line) {
 
     if (line == NULL)
         return NULL;
 
     size_t line_len = strlen(line);
-    char* output = malloc((line_len*5 + 128) * sizeof(char)); //safe limit
+    if (line_len > (SIZE_MAX - 512) / 128) return NULL;
+    char* output = malloc(line_len * 128 + 512);
     if (output == NULL) {
         perror("Error when parsing links\nExiting...\n");
         exit(1);
@@ -52,7 +85,7 @@ char* parse_links(char* line) {
                         strncpy(link_addr, closing_link_name+2, link_addr_len);
                         link_addr[link_addr_len] = '\0';
 
-                        char final_html[512];
+                        char final_html[544];
                         snprintf(final_html, sizeof(final_html), "<a class=\"links\" href=\"%s\">%s</a>", link_addr, link_name);
                         size_t final_html_len = strlen(final_html);
 
@@ -82,7 +115,8 @@ char* parse_videos(char* line) {
 
     size_t line_len = strlen(line);
 
-    size_t capacity = line_len * 20 + 512;
+    if (line_len > (SIZE_MAX - 512) / 128) return NULL;
+    size_t capacity = line_len * 128 + 512;
     char* output = malloc(capacity);
 
     if (output == NULL) {
@@ -107,7 +141,7 @@ char* parse_videos(char* line) {
                     strncpy(vid_name, &line[line_reader_pointer+5], vid_name_len);
                     vid_name[vid_name_len] = '\0';
 
-                    char vid_html[512];
+                    char vid_html[720];
                     snprintf(vid_html, sizeof(vid_html), "<video controls width=460 class=\"site-vids\">\n <source src=../site-imgs/%s type=\"video/mp4\">\n <source src=../site-imgs/%s type=\"video/webm\"> \nYour browser does not support vid tag (fallback)\n</video>", vid_name, vid_name);
                     size_t vid_html_len = strlen(vid_html);
                     strcpy(&output[output_writer_pointer], vid_html);
@@ -134,7 +168,8 @@ char* parse_images(char* line) {
         return NULL;
 
     size_t line_len = strlen(line);
-    char* output = malloc((line_len*5 + 128) * sizeof(char));
+    if (line_len > (SIZE_MAX - 512) / 128) return NULL;
+    char* output = malloc(line_len * 128 + 512);
     if (output == NULL) {
         perror("Error when parsing images\nExiting...\n");
         exit(1);
@@ -157,7 +192,7 @@ char* parse_images(char* line) {
                     strncpy(img_name, &line[line_reader_pointer+5], img_name_len);
                     img_name[img_name_len] = '\0';
 
-                    char img_html[512];
+                    char img_html[576];
                     snprintf(img_html, sizeof(img_html), "<img src=\"../site-imgs/%s\" alt=\"%s\" class=\"site-imgs\">", img_name, img_name);
                     size_t img_html_len = strlen(img_html);
                     strcpy(&output[output_writer_pointer], img_html);
@@ -225,7 +260,9 @@ char* single_line_codeblock_giver(char* line) {
 
     size_t line_len = strlen(line);
 
-    char* output = malloc((line_len*10+1)*sizeof(char)); //worse case buffer expansion
+    if (line_len > (SIZE_MAX - 1) / 128) return NULL;
+    size_t output_capacity = line_len * 128 + 1;
+    char* output = malloc(output_capacity);
     if (output == NULL) {
         perror("Error when parsing single line code blocks..\n");
         exit(1);
@@ -246,13 +283,16 @@ char* single_line_codeblock_giver(char* line) {
                 line_reader_pointer += 1;
 
                 while (&line[line_reader_pointer] != closing) {
-                    output[output_writer_pointer++] = line[line_reader_pointer++];
+                    char one[2] = { line[line_reader_pointer++], '\0' };
+                    append_escaped_text(output, output_capacity, &output_writer_pointer, one);
                 }
 
                 strcpy(&output[output_writer_pointer], "</code>");
                 output_writer_pointer += strlen("</code>");
                 line_reader_pointer += 1;
-
+            } else {
+                /* An unmatched backtick is literal text; always advance. */
+                output[output_writer_pointer++] = line[line_reader_pointer++];
             }
 
         }
@@ -274,7 +314,8 @@ char* bold_italics_line_giver(char *line) {
 
     size_t line_len = strlen(line);
 
-    char* output = malloc((line_len*3+1)*sizeof(char)); //3x buffer size to account for html tags
+    if (line_len > (SIZE_MAX - 1) / 8) return NULL;
+    char* output = malloc(line_len * 8 + 1);
     if (output == NULL) {
         perror("Error when bold italics..\n");
         exit(1);
@@ -363,7 +404,12 @@ char* parse_line(char** line, int n) {
     size_t buffer_size = 0;
 
     for (int i = 0; i < n; i++) {
-        buffer_size += strlen(line[i]) * 20 + 512;
+        size_t line_length = strlen(line[i]);
+        if (line_length > (SIZE_MAX - 512) / 256 || buffer_size > SIZE_MAX - (line_length * 256 + 512)) {
+            fprintf(stderr, "Markdown input is too large to render safely.\n");
+            return NULL;
+        }
+        buffer_size += line_length * 256 + 512;
     }
 
     // output string in heap so that it survies in main.c
@@ -424,27 +470,21 @@ char* parse_line(char** line, int n) {
             }
 
             if (strcmp(keyy, "tags") == 0) {
-                char *tag_value = strtok(valuee, ",");
-                while(tag_value != NULL) {
-                    while (*tag_value == ' ') tag_value++;
-
-                    if (strlen(tag_value) > 0) {
-                        strcpy(fm.entries[fm.count].key, "tag");
-                        strcpy(fm.entries[fm.count].value, tag_value);
-                        fm.count++;
-                    }
-
-                    // Get the next tag, separated by a comma.
-                    tag_value = strtok(NULL, ",");
+                char *tag_value = valuee;
+                while (tag_value != NULL) {
+                    char *comma = strchr(tag_value, ',');
+                    if (comma != NULL) *comma = '\0';
+                    while (isspace((unsigned char)*tag_value)) tag_value++;
+                    size_t tag_len = strlen(tag_value);
+                    while (tag_len > 0 && isspace((unsigned char)tag_value[tag_len - 1])) tag_value[--tag_len] = '\0';
+                    if (tag_len > 0) store_metadata("tag", tag_value);
+                    tag_value = comma == NULL ? NULL : comma + 1;
                 }
             }
             else {
 
-                while (*valuee == ' ') valuee++; //trim leading space, same as tags above
-
-                strcpy(fm.entries[fm.count].key, keyy);
-                strcpy(fm.entries[fm.count].value, valuee);
-                fm.count++;
+                while (isspace((unsigned char)*valuee)) valuee++;
+                store_metadata(keyy, valuee);
 
             }
 
@@ -471,8 +511,12 @@ char* parse_line(char** line, int n) {
         }
 
         if (in_code_block) {
-            strcat(output, line[i]);
-            strcat(output, "\n");
+            size_t used = strlen(output);
+            append_escaped_text(output, buffer_size + 1, &used, line[i]);
+            if (used + 1 < buffer_size + 1) {
+                output[used++] = '\n';
+                output[used] = '\0';
+            }
             continue;
         }
 
